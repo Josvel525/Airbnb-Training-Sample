@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Airbnb mobile mirror</title>
+<meta name="theme-color" content="#ffffff">
+<meta name="color-scheme" content="light">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Airbnb UI">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="./icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" sizes="180x180">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+/* EDIT THE SHARED COLORS, FONT, SPACING AND TAB HEIGHT HERE. */
+:root{
+  --ink:#222;--muted:#717171;--red:#e90046;--line:#ebebeb;
+  --font:"Nunito Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --gutter:24px;--tab-height:62px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none;background:#fff}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.4;-webkit-font-smoothing:antialiased}
+button,input,a{font:inherit}
+button{border:0;color:inherit;background:none;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+button{-webkit-appearance:none;appearance:none}
+img{display:block;max-width:100%}
+.icon{display:block;width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.phone{
+  /* Fill the available viewport, including when launched from the Home Screen. */
+  position:fixed;inset:0;display:flex;flex-direction:column;isolation:isolate;
+  width:100%;max-width:none;height:100vh;height:100dvh;min-height:0;min-width:0;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);
+  overflow:hidden;background:#fff;
+}
+/* Each active screen has a fixed header and one scrolling middle. */
+.screen{display:none;flex:1 1 0%;min-height:0;overflow:hidden;background:#fff}
+.screen.active{display:flex;flex-direction:column}
+.page-header{position:relative;z-index:5;flex:0 0 auto;background:#fff}
+.page-scroll{flex:1 1 0%;min-height:0;overflow-y:auto;overflow-x:hidden;padding-bottom:24px;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-padding-top:12px}
+.page-scroll::-webkit-scrollbar,.hscroll::-webkit-scrollbar,.cats::-webkit-scrollbar{display:none}
+
+/* EXPLORE — dimensions calibrated to a 430px viewport. */
+.explore-header{background:linear-gradient(180deg,#e9e8e6 0%,#fafafa 78%,#fff 100%)}
+.search-wrap{padding:22px 20px 16px}
+.searchbar{height:58px;display:flex;align-items:center;justify-content:center;gap:9px;border-radius:40px;background:#fff;box-shadow:0 7px 22px #00000010;font-size:14px;font-weight:700}
+.searchbar .icon{width:18px;height:18px;stroke-width:2.2}
+.cats,.hscroll{display:flex;overflow-x:auto;scrollbar-width:none;overscroll-behavior-x:contain}
+.cats{gap:8px;padding:0 20px 12px}
+.cat{flex:0 0 auto;display:flex;align-items:center;gap:8px;height:40px;padding:0 15px;border:1px solid #f6f6f6;border-radius:30px;background:linear-gradient(#f5f5f5,#fff);box-shadow:0 2px 2px #0000001c,0 2px 7px #00000008;font-size:14px;white-space:nowrap}
+.cat.active{background:#e8e7e5;box-shadow:inset 0 2px 3px #00000025,0 1px 0 #fff}
+.cat .emo{font-size:18px;line-height:1}
+.sec-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:24px var(--gutter) 14px}
+.sec-head h2{font-size:17px;font-weight:800;letter-spacing:-.35px;line-height:24px}
+.arrow-btn{flex:0 0 28px;width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:#f3f3f3}
+.arrow-btn .icon{width:19px;height:19px}
+.hscroll{gap:12px;padding:0 var(--gutter) 3px;scroll-snap-type:x proximity;scroll-padding-left:var(--gutter)}
+.rv-card,.ph-card,.svc{position:relative;flex-shrink:0;scroll-snap-align:start}
+.rv-card{flex-basis:120px;width:120px}
+.rv-card>img{width:120px;height:114px;object-fit:cover;border-radius:20px}
+.rv-card h3{margin:8px 3px 0;font-size:13px;font-weight:700;line-height:15px}
+.rv-card p{margin:4px 3px 0;font-size:12px;line-height:16px;color:var(--muted);white-space:nowrap}
+.star{font-size:11px}
+.svc{flex-basis:96px;width:96px}
+.svc .box{width:96px;height:96px;display:grid;place-items:center;overflow:hidden;border-radius:20px;background:#f7f7f7}
+.svc .box img{width:75px;height:75px;object-fit:contain;mix-blend-mode:multiply}
+.svc span{display:block;margin:8px 3px 0;font-size:12px;font-weight:700;white-space:nowrap}
+.ph-card{flex-basis:185px;width:185px}
+.ph-card>img{width:185px;height:176px;object-fit:cover;border-radius:21px}
+.ph-card h3{margin:8px 3px 0;font-size:13px;font-weight:700}
+.ph-card p{margin:2px 3px 0;font-size:12px;color:var(--muted)}
+.favorite{position:absolute;top:7px;right:7px;display:grid;place-items:center;width:26px;height:26px}
+.favorite .icon{width:21px;height:21px;fill:#0006;stroke:#fff;stroke-width:2.5;filter:drop-shadow(0 1px 2px #0004)}
+.favorite[aria-pressed="true"] .icon{fill:#ff385c}
+.ph-card .favorite{top:9px;right:10px}
+.ph-card .favorite .icon{width:26px;height:26px}
+.guest-badge{position:absolute;top:13px;left:10px;padding:4px 9px;border:1px solid #fff;border-radius:20px;background:#fffffff2;font-size:10px;line-height:14px;font-weight:800}
+
+/* WISHLISTS */
+.wl-top{display:flex;justify-content:flex-end;padding:28px 16px 0}
+.edit-btn{height:40px;padding:0 20px;border-radius:28px;background:#f2f2f2;font-size:14px;font-weight:700}
+.page-title{padding:18px var(--gutter) 30px;font-size:32px;line-height:37px;font-weight:800;letter-spacing:-1px}
+.wl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 12px;padding:0 var(--gutter)}
+.wl-cover{width:100%;aspect-ratio:1.05;overflow:hidden;border-radius:21px;background:#f4f4f4;box-shadow:0 6px 18px #0000000b}
+.wl-cover img{width:100%;height:100%;object-fit:cover}
+.wl-quad{display:grid;grid-template:repeat(2,minmax(0,1fr))/repeat(2,minmax(0,1fr));gap:3px}
+.wl-name{margin-top:9px;font-size:15px;font-weight:700;line-height:20px}
+.wl-sub{margin-top:1px;font-size:13px;line-height:19px;color:var(--muted)}
+
+/* MESSAGES — the title and filter row stay above the scrolling inbox. */
+.msg-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:28px 16px 0 var(--gutter)}
+.msg-head h1{font-size:22px;font-weight:800;line-height:28px;letter-spacing:-.4px}
+.icon-btn{display:grid;place-items:center;flex:0 0 40px;width:40px;height:40px;border-radius:50%;background:#f3f3f3}
+.icon-btn .icon{width:22px;height:22px}
+.msg-tabs{display:flex;gap:8px;padding:16px var(--gutter) 8px;border-bottom:1px solid var(--line)}
+.pill{height:40px;padding:0 18px;border-radius:24px;background:#f3f3f3;font-size:13px;font-weight:700}
+.pill.on{color:#fff;background:#222}
+.thread{display:flex;align-items:flex-start;gap:16px;padding:12px var(--gutter) 6px}
+.thumbs{position:relative;flex:0 0 64px;width:64px;height:70px}
+.thumbs>img.main{width:56px;height:56px;border-radius:12px;object-fit:cover}
+.thumbs>img.ov{position:absolute;left:14px;bottom:0;z-index:2;width:34px;height:34px;border:2px solid #fff;border-radius:50%;object-fit:cover}
+.thumbs .initial{position:absolute;top:18px;right:0;width:34px;height:34px;display:grid;place-items:center;border:2px solid #fff;border-radius:50%;background:#fce6ea;color:#ae1942;font-size:14px;font-weight:800}
+.body{flex:1;min-width:0}
+.trow{display:flex;align-items:baseline;gap:7px}
+.tname{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px;line-height:20px;font-weight:700}
+.ttime{flex-shrink:0;font-size:11px;color:var(--muted);white-space:nowrap}
+.tprev{margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;line-height:18px;color:var(--muted)}
+.tprev.bold{color:var(--ink);font-weight:700}
+.tmeta{margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;line-height:18px;color:var(--muted)}
+.dot{display:inline-block;vertical-align:1px;width:7px;height:7px;margin-right:4px;border-radius:50%;background:#e31c1c}
+.rev{color:inherit}
+.review-btn{display:block;width:max-content;max-width:100%;height:31px;margin:16px 0 5px;padding:0 16px;border-radius:9px;background:#f3f3f3;font-size:12px;font-weight:700}
+.abnb-av{display:grid;place-items:center;width:64px;height:64px;border-radius:50%;background:#222}
+.abnb-av svg{width:32px;height:32px}
+
+/* PROFILE — large title scrolls away; the small title and bell stay. */
+.profile-scroll{scroll-padding-top:84px}
+.profile-toolbar{position:sticky;top:0;z-index:6;display:flex;align-items:center;justify-content:space-between;height:76px;padding:28px 16px 8px var(--gutter);background:#fff;border-bottom:1px solid transparent}
+.profile-toolbar h2{font-size:22px;letter-spacing:-.4px;line-height:28px;font-weight:800;opacity:0}
+.profile-scroll.is-scrolled .profile-toolbar{border-bottom-color:var(--line)}
+.profile-scroll.is-scrolled .profile-toolbar h2{opacity:1}
+#profile .page-title{padding-top:12px;padding-bottom:26px}
+.bell{position:relative}
+.bell .nd{position:absolute;top:11px;right:12px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+.card{margin:0 var(--gutter) 16px;border:1px solid #f3f3f3;border-radius:24px;background:#fff;box-shadow:0 9px 24px #00000010}
+.profile-card{padding:36px 24px}
+.pf-main{display:flex;align-items:center;gap:24px}
+.pf-left{flex:0 0 58%;min-width:0;text-align:center}
+.av-wrap{position:relative;width:115px;max-width:100%;margin:0 auto}
+.av-wrap img{width:115px;height:115px;border-radius:50%;object-fit:cover}
+.verif{position:absolute;right:0;bottom:0;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#e90059;color:#fff;box-shadow:0 3px 7px #0002}
+.verif .icon{width:20px;height:20px}
+.pf-name{margin-top:16px;font-size:28px;font-weight:800;line-height:34px;letter-spacing:-.7px}
+.pf-loc{font-size:13px;line-height:20px;color:var(--muted)}
+.stats{flex:1;min-width:0}
+.stat{padding:12px 0}
+.stat:first-child{padding-top:0}.stat:last-child{padding-bottom:0}
+.stat+.stat{border-top:1px solid #ddd}
+.stat b{display:block;font-size:22px;line-height:26px;font-weight:800}
+.stat span{display:block;font-size:14px;line-height:19px;font-weight:600;white-space:nowrap}
+.tm-card{position:relative;padding:18px 8px 8px;border-radius:19px}
+.tm-card h3{margin:0 15px;font-size:16px;line-height:22px;font-weight:700}
+.tm-card p{margin:3px 15px 0;font-size:12px;line-height:18px;color:var(--muted)}
+.tm-card>img{width:100%;aspect-ratio:2.1;object-fit:cover;border-radius:18px;margin-top:12px}
+.new-tag{position:absolute;z-index:1;top:10px;right:10px;padding:2px 6px;border:1px solid #8293a5;border-radius:20px;background:linear-gradient(#657d99,#3d536c);box-shadow:0 2px 6px #25384d66;color:#fff;font-size:8px;line-height:11px;letter-spacing:.3px;font-weight:800}
+.tm-card .new-tag{top:9px;right:9px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:0 var(--gutter) 16px}
+.mini{position:relative;min-width:0;padding:22px 16px 16px;border:1px solid #f3f3f3;border-radius:21px;background:#fff;box-shadow:0 9px 24px #00000010;text-align:center}
+.mini .ill{display:flex;align-items:center;justify-content:center;height:114px}
+.mini .ill img{max-height:114px;max-width:100%;object-fit:contain}
+.mini b{display:block;margin-top:11px;font-size:16px;line-height:22px;font-weight:700}
+.host{display:flex;align-items:center;gap:15px;min-height:104px;padding:18px 24px;border-radius:20px}
+.host img{flex-shrink:0;width:50px;height:63px;object-fit:contain}
+.host h3{font-size:16px;font-weight:700;line-height:22px}
+.host p{margin-top:2px;font-size:12px;line-height:17px;color:var(--muted)}
+.list{padding:8px var(--gutter) 0}
+.li{display:flex;align-items:center;gap:17px;min-height:56px;padding:12px 0;font-size:16px;line-height:22px}
+.li .ic{display:grid;place-items:center;flex:0 0 24px;width:24px}
+.li .ic .icon{width:24px;height:24px;stroke-width:1.6}
+.li .ch{margin-left:auto;font-size:27px;color:#999}
+
+/* TRIPS — horizontal cards, matching the earlier trip screen. */
+.trips-header{height:84px;border-bottom:1px solid var(--line);text-align:center}
+.trips-header .grabber{width:28px;height:3px;margin:8px auto 18px;border-radius:8px;background:#999}
+.trips-header h1{font-size:26px;font-weight:700;line-height:32px}
+.trips-content{padding:18px var(--gutter) 24px}
+.trip-caption{display:flex;gap:12px;align-items:center;margin-bottom:20px;font-size:11px;color:#939393}
+.trip-caption:after{content:"";flex:1;height:1px;background:var(--line)}
+.trip-list{display:grid;gap:12px}
+.trip-card{display:flex;align-items:center;gap:16px;min-height:118px;padding:10px;border:1px solid #f4f4f4;border-radius:23px;background:#fff;box-shadow:0 6px 17px #0000000d}
+.property-photo{flex-shrink:0;width:98px;height:98px;border-radius:16px;object-fit:cover}
+.trip-city{font-size:18px;line-height:23px;font-weight:700}
+.trip-date{font-size:12px;line-height:18px;color:var(--muted)}
+.host-avatar{width:30px;height:30px;margin-top:12px;border-radius:50%;object-fit:cover}
+.view-more{width:100%;height:40px;margin-top:20px;border-radius:13px;background:#f3f3f3;font-size:13px;font-weight:700}
+
+/* TAB BAR — occupies its own row; content never sits underneath it. */
+.tabbar{position:relative;z-index:20;flex:0 0 auto;display:flex;align-items:stretch;height:calc(var(--tab-height) + env(safe-area-inset-bottom,0px));padding:7px 0 calc(8px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:#fff}
+.tab{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;color:#757672}
+.tab .ti{position:relative;display:flex;align-items:center;justify-content:center;height:28px;width:28px}
+.tab .ti .icon,.tab .abnb-ico{width:28px;height:28px}
+.tab .nav-label{font-size:10px;line-height:14px;font-weight:400;white-space:nowrap}
+.tab.on{color:var(--red)}.tab.on .nav-label{font-weight:700}
+.tab .nd{position:absolute;top:0;right:-4px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+.tab img.pav{width:23px;height:23px;border-radius:50%;object-fit:cover}
+.tab.on img.pav{outline:1.5px solid var(--red);outline-offset:2px}
+.abnb-ico{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.toast{position:absolute;z-index:30;left:50%;bottom:calc(var(--tab-height) + env(safe-area-inset-bottom,0px) + 12px);max-width:88%;padding:9px 14px;border-radius:18px;background:#222f;color:#fff;font-size:12px;line-height:17px;text-align:center;transform:translateX(-50%);pointer-events:none}
+.toast:empty{display:none}
+[hidden]{display:none!important}
+@media(max-width:390px){
+ :root{--gutter:20px}
+ .rv-card{flex-basis:110px;width:110px}.rv-card>img{width:110px;height:105px}
+ .svc{flex-basis:88px;width:88px}.svc .box{width:88px;height:88px}
+ .ph-card{flex-basis:167px;width:167px}.ph-card>img{width:167px;height:160px}
+ .profile-card{padding:30px 16px}.pf-main{gap:18px}.pf-left{flex-basis:56%}
+ .av-wrap,.av-wrap img{width:103px}.av-wrap img{height:103px}
+ .stat span{font-size:12px}.pf-name{font-size:26px}
+ .thread{gap:12px}.tname{font-size:14px}.tprev,.tmeta{font-size:12px}
+ .tm-card h3{font-size:15px}.tm-card p{font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+/* Keep cards readable on larger screens while the app fills the whole window. */
+@media(min-width:600px){
+ .wl-grid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+ .trip-list{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+ .profile-card,.tm-card,.host,.two{max-width:720px;margin-left:auto;margin-right:auto;width:calc(100% - 2 * var(--gutter))}
+}
+
+</style>
+</head>
+<body><main class="phone">
+<section class="screen active" id="explore" aria-label="explore"><header class="page-header explore-header">
+<div class="search-wrap"><div class="searchbar"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="13.5" cy="13.5" r="10.5"/><path d="m21 21 9 9"/></svg>Start your search</div></div>
+<div class="cats"><div class="cat active"><span class="emo">🌎</span>All</div><div class="cat"><span class="emo">🏠</span>Homes</div><div class="cat"><span class="emo">🎈</span>Experiences</div><div class="cat"><span class="emo">🛎️</span>Services</div></div>
+</header><div class="page-scroll" tabindex="0" aria-label="explore content"><div class="sec-head"><h2>Recently viewed</h2><div class="arrow-btn"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M6 16h20M18 8l8 8-8 8"/></svg></div></div><div class="hscroll">
+<div class="rv-card"><img src="https://cdn.screenshottocode.com/7fyVdMoWoVu_TvwTNgFz8.png" alt=""><button class="favorite" type="button" aria-label="Save home" aria-pressed="false"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M16 28C13.7 26.4 2.5 18.6 2.5 11.5C2.5 7.2 5.35 4 9.25 4C12.05 4 14.2 6.4 16 8.25C17.8 6.4 19.95 4 22.75 4C26.65 4 29.5 7.2 29.5 11.5C29.5 18.6 18.3 26.4 16 28Z"/></svg></button><h3>Neartown<br>- Montrose</h3><p>1 bed · <span class="star" aria-hidden="true">★</span> 4.79</p></div><div class="rv-card"><img src="https://cdn.screenshottocode.com/AdyxBRUNTcBiJBRbsSb3d.png" alt=""><button class="favorite" type="button" aria-label="Save home" aria-pressed="true"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M16 28C13.7 26.4 2.5 18.6 2.5 11.5C2.5 7.2 5.35 4 9.25 4C12.05 4 14.2 6.4 16 8.25C17.8 6.4 19.95 4 22.75 4C26.65 4 29.5 7.2 29.5 11.5C29.5 18.6 18.3 26.4 16 28Z"/></svg></button><h3>Neartown<br>- Montrose</h3><p>1 bed · <span class="star" aria-hidden="true">★</span> 4.85</p></div><div class="rv-card"><img src="https://cdn.screenshottocode.com/aEk_sYmWL5pzAapEYboTb.png" alt=""><button class="favorite" type="button" aria-label="Save home" aria-pressed="true"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M16 28C13.7 26.4 2.5 18.6 2.5 11.5C2.5 7.2 5.35 4 9.25 4C12.05 4 14.2 6.4 16 8.25C17.8 6.4 19.95 4 22.75 4C26.65 4 29.5 7.2 29.5 11.5C29.5 18.6 18.3 26.4 16 28Z"/></svg></button><h3>Greater Heights</h3><p>1 bed · <span class="star" aria-hidden="true">★</span> 4.87</p></div><div class="rv-card"><img src="https://cdn.screenshottocode.com/D8f-By153vy_dOgKl8_UO.png" alt=""><button class="favorite" type="button" aria-label="Save home" aria-pressed="false"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M16 28C13.7 26.4 2.5 18.6 2.5 11.5C2.5 7.2 5.35 4 9.25 4C12.05 4 14.2 6.4 16 8.25C17.8 6.4 19.95 4 22.75 4C26.65 4 29.5 7.2 29.5 11.5C29.5 18.6 18.3 26.4 16 28Z"/></svg></button><h3>Neartown<br>- Montrose</h3><p>3 beds · <span class="star" aria-hidden="true">★</span> 4.9</p></div></div>
+<div class="sec-head"><h2>Find services near you</h2></div><div class="hscroll"><div class="svc"><div class="box"><img src="https://cdn.screenshottocode.com/QDydtQu8F-fPubMuOTdak.png" alt=""></div><span>Car rentals</span></div><div class="svc"><div class="box"><img src="https://cdn.screenshottocode.com/nvjj_ukZVXMDjM5OoY7IK.png" alt=""></div><span>Photography</span></div><div class="svc"><div class="box"><img src="https://cdn.screenshottocode.com/7WeT4kVhsi-AQsvfYklWb.png" alt=""></div><span>Chefs</span></div><div class="svc"><div class="box"><img src="https://cdn.screenshottocode.com/LJy1p5tMRRZ--rzfwcx4w.png" alt=""></div><span>Massage</span></div></div>
+<div class="sec-head"><h2>Popular homes in Austin</h2><div class="arrow-btn"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M6 16h20M18 8l8 8-8 8"/></svg></div></div><div class="hscroll"><div class="ph-card"><img src="https://cdn.screenshottocode.com/v_MUWq1-vLu0NBEfz5BxX.png" alt=""><button class="favorite" type="button" aria-label="Save home" aria-pressed="false"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M16 28C13.7 26.4 2.5 18.6 2.5 11.5C2.5 7.2 5.35 4 9.25 4C12.05 4 14.2 6.4 16 8.25C17.8 6.4 19.95 4 22.75 4C26.65 4 29.5 7.2 29.5 11.5C29.5 18.6 18.3 26.4 16 28Z"/></svg></button><span class="guest-badge">Guest favorite</span><h3>Room in Austin</h3><p>$89 night · ★ 4.92</p></div><div class="ph-card"><img src="https://cdn.screenshottocode.com/H5jYMJXnbXN9gR-bmKjEq.png" alt=""><button class="favorite" type="button" aria-label="Save home" aria-pressed="false"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M16 28C13.7 26.4 2.5 18.6 2.5 11.5C2.5 7.2 5.35 4 9.25 4C12.05 4 14.2 6.4 16 8.25C17.8 6.4 19.95 4 22.75 4C26.65 4 29.5 7.2 29.5 11.5C29.5 18.6 18.3 26.4 16 28Z"/></svg></button><span class="guest-badge">Guest favorite</span><h3>Room in Austin</h3><p>$104 night · ★ 4.88</p></div><div class="ph-card"><img src="https://cdn.screenshottocode.com/1yUbRCf1fUpuCL2OZUiSW.png" alt=""><button class="favorite" type="button" aria-label="Save home" aria-pressed="false"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M16 28C13.7 26.4 2.5 18.6 2.5 11.5C2.5 7.2 5.35 4 9.25 4C12.05 4 14.2 6.4 16 8.25C17.8 6.4 19.95 4 22.75 4C26.65 4 29.5 7.2 29.5 11.5C29.5 18.6 18.3 26.4 16 28Z"/></svg></button><span class="guest-badge">Guest favorite</span><h3>Room in Austin</h3><p>$120 night · ★ 4.95</p></div></div></div></section>
+<section class="screen" id="wishlists" aria-label="wishlists"><header class="page-header wishlists-header"><div class="wl-top"><button class="edit-btn">Edit</button></div><h1 class="page-title">Wishlists</h1></header><div class="page-scroll" tabindex="0" aria-label="wishlists content"><div class="wl-grid">
+<div><div class="wl-cover wl-quad"><img src="https://cdn.screenshottocode.com/7fyVdMoWoVu_TvwTNgFz8.png" alt=""><img src="https://cdn.screenshottocode.com/AdyxBRUNTcBiJBRbsSb3d.png" alt=""><img src="https://cdn.screenshottocode.com/aEk_sYmWL5pzAapEYboTb.png" alt=""><img src="https://cdn.screenshottocode.com/D8f-By153vy_dOgKl8_UO.png" alt=""></div><div class="wl-name">Recently viewed</div><div class="wl-sub">Yesterday</div></div><div><div class="wl-cover"><img src="https://cdn.screenshottocode.com/ZvqBWzAzVhYovb4Eqm8vl.png" alt=""></div><div class="wl-name">Carter</div><div class="wl-sub">4 saved</div></div><div><div class="wl-cover"><img src="https://cdn.screenshottocode.com/7bczJzAtAcAuJL3ZgXfwG.png" alt=""></div><div class="wl-name">Vacation Places</div><div class="wl-sub">4 saved</div></div><div><div class="wl-cover"><img src="https://cdn.screenshottocode.com/D8f-By153vy_dOgKl8_UO.png" alt=""></div><div class="wl-name">Houston 2024</div><div class="wl-sub">4 saved</div></div><div><div class="wl-cover"><img src="https://cdn.screenshottocode.com/C98BQKzeMRqdypdKq5bVm.png" alt=""></div><div class="wl-name">Midtown</div><div class="wl-sub">2 saved</div></div><div><div class="wl-cover"><img src="https://cdn.screenshottocode.com/1yUbRCf1fUpuCL2OZUiSW.png" alt=""></div><div class="wl-name">Weekend trips</div><div class="wl-sub">3 saved</div></div></div></div></section>
+<section class="screen" id="messages" aria-label="messages"><header class="page-header messages-header"><div class="msg-head"><h1>Messages</h1><div style="display:flex;gap:10px"><button class="icon-btn"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="13.5" cy="13.5" r="10.5"/><path d="m21 21 9 9"/></svg></button><button class="icon-btn"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="m13 3 6 0 1 4 3 2 4-1 3 5-3 3v3l3 3-3 5-4-1-3 2-1 3h-6l-1-3-3-2-4 1-3-5 3-3v-3l-3-3 3-5 4 1 3-2Z M21 17a5 5 0 1 1-10 0a5 5 0 1 1 10 0"/></svg></button></div></div><div class="msg-tabs"><button class="pill on">All</button><button class="pill">Traveling</button><button class="pill">Support</button></div>
+</header><div class="page-scroll" tabindex="0" aria-label="messages content"><div class="thread"><div class="thumbs"><img class="main" src="https://cdn.screenshottocode.com/7fyVdMoWoVu_TvwTNgFz8.png" alt=""><span class="initial" aria-hidden="true">R</span><img class="ov" src="https://cdn.screenshottocode.com/YGmxAliiYhEH0bLS17h7Q.png" alt=""></div><div class="body"><div class="trow"><div class="tname">Phillip, Rosie (Phillips Assistant), Mic…</div><div class="ttime">7:27 AM</div></div><div class="tprev bold">Michelle (Phillips Assistant): Good morning! You…</div><div class="tmeta">Oct 4 – 5 · Houston</div></div></div>
+<div class="thread"><div class="thumbs"><div class="abnb-av"><svg viewBox="0 0 32 32" fill="#fff"><path d="M16 1c-3 0-5 2-6.4 5.2C7.4 11 3 20.4 2.2 23c-1 3.3.8 6.4 4 6.4 2 0 4-1 6-3.3l.6-.7c.9-1 2.2-2.6 3.2-4 1 1.4 2.3 3 3.2 4l.6.7c2 2.3 4 3.3 6 3.3 3.2 0 5-3.1 4-6.4-.8-2.6-5.2-12-7.4-16.8C21 3 19 1 16 1zm0 2.2c1.9 0 3.3 1.4 4.5 4.1 2.1 4.6 6.5 14 7.2 16.4.6 2-.3 3.5-2 3.5-1.3 0-2.8-.8-4.4-2.6l-.6-.7c-1-1.2-2.4-2.9-3.4-4.3 1.6-2.4 2.6-4.5 2.6-6.4 0-2.5-1.7-4.2-3.9-4.2s-3.9 1.7-3.9 4.2c0 1.9 1 4 2.6 6.4-1 1.4-2.4 3.1-3.4 4.3l-.6.7c-1.6 1.8-3.1 2.6-4.4 2.6-1.7 0-2.6-1.5-2-3.5.7-2.4 5.1-11.8 7.2-16.4C12.7 4.6 14.1 3.2 16 3.2zm0 8c1 0 1.7.8 1.7 2.1 0 1.3-.7 2.9-1.7 4.6-1-1.7-1.7-3.3-1.7-4.6 0-1.3.7-2.1 1.7-2.1z"/></svg></div></div><div class="body"><div class="trow"><div class="tname" style="font-weight:400">Airbnb Support</div><div class="ttime">Yesterday</div></div><div class="tprev">You can download, print, or email the receipt for…</div><div class="tmeta">Ongoing</div></div></div>
+<div class="thread"><div class="thumbs"><img class="main" src="https://cdn.screenshottocode.com/7fyVdMoWoVu_TvwTNgFz8.png" alt=""><span class="initial" aria-hidden="true">R</span><img class="ov" src="https://cdn.screenshottocode.com/YGmxAliiYhEH0bLS17h7Q.png" alt=""></div><div class="body"><div class="trow"><div class="tname" style="font-weight:400">Phillip, Rosie (Phillips Assistant), Mi…</div><div class="ttime">Yesterday</div></div><div class="tprev">Michelle (Phillips Assistant): Hi! We just sent over…</div><div class="tmeta"><span class="dot"></span><span class="rev">Review your stay</span> · Oct 2 – 4 · Houston</div><button class="review-btn" type="button">Leave a review</button></div></div>
+<div class="thread"><div class="thumbs"><img class="main" src="https://cdn.screenshottocode.com/7cryDvj52IidknhGdjLeC.png" alt=""><span class="initial" aria-hidden="true">R</span><img class="ov" src="https://cdn.screenshottocode.com/YGmxAliiYhEH0bLS17h7Q.png" alt=""></div><div class="body"><div class="trow"><div class="tname" style="font-weight:400">Phillip, Rosie (Phillips Assistant), Michell…</div><div class="ttime">Sat</div></div><div class="tprev">Michelle (Phillips Assistant): Thank you so much,…</div><div class="tmeta">Oct 1 – 2 · Houston</div></div></div>
+<div class="thread"><div class="thumbs"><img class="main" src="https://cdn.screenshottocode.com/tKyl2VuuvmWkrWzIyxDfn.png" alt=""><img class="ov" src="https://cdn.screenshottocode.com/A4MNlSYqke-U6DaR29C88.png" alt=""></div><div class="body"><div class="trow"><div class="tname" style="font-weight:400">StayHTOWN</div><div class="ttime">Wed</div></div><div class="tprev">Hey Joseph, I would like to give you a few of my s…</div><div class="tmeta"><span class="dot"></span><span class="rev">Review your stay</span> · Sep 30 – Oct 1 · Houston</div><button class="review-btn" type="button">Leave a review</button></div></div>
+<div class="thread"><div class="thumbs"><img class="main" src="https://cdn.screenshottocode.com/q5H4DWaaRO7GDidJQSeIF.png" alt=""><span class="initial" aria-hidden="true">R</span><img class="ov" src="https://cdn.screenshottocode.com/YGmxAliiYhEH0bLS17h7Q.png" alt=""></div><div class="body"><div class="trow"><div class="tname" style="font-weight:400">Phillip, Rosie (Phillips Assistant), Michell…</div><div class="ttime">9/23</div></div><div class="tprev">Michelle (Phillips Assistant): I hope you had a won…</div><div class="tmeta">Sep 22 – 23 · Houston</div></div></div><div class="thread"><div class="thumbs"><img class="main" src="https://cdn.screenshottocode.com/q5H4DWaaRO7GDidJQSeIF.png" alt=""><span class="initial" aria-hidden="true">R</span><img class="ov" src="https://cdn.screenshottocode.com/YGmxAliiYhEH0bLS17h7Q.png" alt=""></div><div class="body"><div class="trow"><div class="tname" style="font-weight:400">Phillip, Rosie (Phillips Assistant), Michell…</div><div class="ttime">9/22</div></div><div class="tprev">Michelle (Phillips Assistant): Let us know if you wa…</div><div class="tmeta"><span class="dot"></span><span class="rev">Review your stay</span> · Sep 20 – 22 · Houston</div></div></div></div></section>
+<section class="screen" id="trips" aria-label="Trips"><header class="page-header trips-header"><div class="grabber" aria-hidden="true"></div><h1>Trips</h1></header><div class="page-scroll trips-content" tabindex="0" aria-label="Past trips"><div class="trip-caption">Past trips</div><div class="trip-list"><article class="trip-card"><img class="property-photo" src="https://cdn.screenshottocode.com/VWOT0uSgsRv7r62Kle8w6.png" alt="Bright Houston bedroom"><div><h2 class="trip-city">Houston</h2><p class="trip-date">Oct 3 – 4, 2026</p><img class="host-avatar" src="https://cdn.screenshottocode.com/4pNyUT0o_Rfos6bWL3TdI.png" alt="Host"></div></article>
+<article class="trip-card"><img class="property-photo" src="https://cdn.screenshottocode.com/IWYMN62nOD4nzjGNkYywk.png" alt="Houston home with a pool"><div><h2 class="trip-city">Houston</h2><p class="trip-date">Oct 1 – 2, 2026</p><img class="host-avatar" src="https://cdn.screenshottocode.com/4pNyUT0o_Rfos6bWL3TdI.png" alt="Host"></div></article>
+<article class="trip-card"><img class="property-photo" src="https://cdn.screenshottocode.com/tKyl2VuuvmWkrWzIyxDfn.png" alt="Houston bedroom with a blue bed"><div><h2 class="trip-city">Houston</h2><p class="trip-date">Sep 30 – Oct 1, 2026</p><img class="host-avatar" src="https://cdn.screenshottocode.com/4pNyUT0o_Rfos6bWL3TdI.png" alt="Host"></div></article>
+<article class="trip-card"><img class="property-photo" src="https://cdn.screenshottocode.com/7F0pduHG8tO4yDWafwGUP.png" alt="Houston bedroom with colorful artwork"><div><h2 class="trip-city">Houston</h2><p class="trip-date">Sep 22 – 23, 2026</p><img class="host-avatar" src="https://cdn.screenshottocode.com/4pNyUT0o_Rfos6bWL3TdI.png" alt="Host"></div></article></div><button class="view-more" type="button">View more</button></div></section>
+<section class="screen" id="profile" aria-label="Profile"><div class="page-scroll profile-scroll" tabindex="0" aria-label="Profile content"><header class="profile-toolbar"><h2 aria-hidden="true">Profile</h2><button class="icon-btn bell" type="button" aria-label="Notifications"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M12 5a4 4 0 0 1 8 0M7 14c0-5 3-8 9-8s9 3 9 8v7l3 4H4l3-4Zm6 11v1a3 3 0 0 0 6 0v-1"/></svg><span class="nd" aria-hidden="true"></span></button></header><h1 class="page-title">Profile</h1><div class="card profile-card"><div class="pf-main"><div class="pf-left"><div class="av-wrap"><img src="https://cdn.screenshottocode.com/4eU-kzOY2LsECPlvk9Eak.png" alt=""><div class="verif"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M16 3 28 8v9c0 7-12 13-12 13S4 24 4 17V8Z M10 16l4 4 8-9"/></svg></div></div><div class="pf-name">Joseph</div><div class="pf-loc">Houston, TX</div></div><div class="stats"><div class="stat"><b>91</b><span>Trips</span></div><div class="stat"><b>51</b><span>Reviews</span></div><div class="stat"><b>11</b><span>Years on Airbnb</span></div></div></div></div><div class="card tm-card"><div class="new-tag">NEW</div><h3>Introducing the travel map</h3><p>Get inspired by trips from people you know.</p><img src="https://cdn.screenshottocode.com/tB7EAWCazgZBlWCafPnHW.png" alt=""></div><div class="two"><div class="mini"><div class="new-tag">NEW</div><div class="ill"><img src="https://cdn.screenshottocode.com/YcQbky6rMxKoXJkOzJqKf.png" alt=""></div><b>Past trips</b></div><div class="mini"><div class="new-tag">NEW</div><div class="ill"><img src="https://cdn.screenshottocode.com/qn057kBsKanI8pZ6RO-ST.png" alt=""></div><b>Connections</b></div></div><div class="card host"><img src="https://cdn.screenshottocode.com/M2u_f89m2oCcgOkiOwx9_.png" alt=""><div><h3>Become a host</h3><p>It's easy to start hosting and earn extra income.</p></div></div><div class="list"><div class="li"><span class="ic"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="m13 3 6 0 1 4 3 2 4-1 3 5-3 3v3l3 3-3 5-4-1-3 2-1 3h-6l-1-3-3-2-4 1-3-5 3-3v-3l-3-3 3-5 4 1 3-2Z M21 17a5 5 0 1 1-10 0a5 5 0 1 1 10 0"/></svg></span>Account settings<span class="ch">›</span></div><div class="li"><span class="ic"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M30 16A14 14 0 1 1 2 16a14 14 0 0 1 28 0Z M11 12a5 5 0 1 1 8 4c-3 1-3 2-3 4M16 25h.01"/></svg></span>Get help<span class="ch">›</span></div><div class="li"><span class="ic"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M22 8a6 6 0 1 1-12 0a6 6 0 1 1 12 0ZM3 29c2-6 6-10 13-10s11 4 13 10"/></svg></span>View profile<span class="ch">›</span></div><div class="li"><span class="ic"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M30 16A14 14 0 1 1 2 16a14 14 0 0 1 28 0ZM22 16a6 6 0 1 1-12 0a6 6 0 0 1 12 0ZM6 6l6 6M20 20l6 6M6 26l6-6M20 12l6-6"/></svg></span>Refer a Host<span class="ch">›</span></div><div class="li"><span class="ic"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M13 3H4v26h9M11 16h18M22 9l7 7-7 7"/></svg></span>Log out<span class="ch">›</span></div></div></div></section>
+<nav class="tabbar" aria-label="Primary navigation"><button class="tab on" data-go="explore"><span class="ti"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="13.5" cy="13.5" r="10.5"/><path d="m21 21 9 9"/></svg></span><span class="nav-label">Explore</span></button><button class="tab" data-go="wishlists"><span class="ti"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M16 28C13.7 26.4 2.5 18.6 2.5 11.5C2.5 7.2 5.35 4 9.25 4C12.05 4 14.2 6.4 16 8.25C17.8 6.4 19.95 4 22.75 4C26.65 4 29.5 7.2 29.5 11.5C29.5 18.6 18.3 26.4 16 28Z"/></svg></span><span class="nav-label">Wishlists</span></button><button class="tab" data-go="trips"><span class="ti"><svg class="abnb-ico" viewBox="0 0 32 32"><path d="M16 2c-2.2 0-3.8 1.6-5.1 4.3C8.9 10.4 4.4 19.9 3.6 22.6c-.8 2.6.6 5 3.2 5 1.7 0 3.4-.9 5.2-2.9.4-.4.8-.9 1.2-1.4 1-1.2 2-2.5 2.8-3.7.8 1.2 1.8 2.5 2.8 3.7.4.5.8 1 1.2 1.4 1.8 2 3.5 2.9 5.2 2.9 2.6 0 4-2.4 3.2-5-.8-2.7-5.3-12.2-7.3-16.3C19.8 3.6 18.2 2 16 2zm0 9.6c1.3 0 2.3 1.1 2.3 2.8 0 1.7-1 3.8-2.3 6-1.3-2.2-2.3-4.3-2.3-6 0-1.7 1-2.8 2.3-2.8z"/></svg><i class="nd"></i></span><span class="nav-label">Trips</span></button><button class="tab" data-go="messages"><span class="ti"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M6.5 4H25.5Q29 4 29 7.5V21.5Q29 25 25.5 25H20L16 29L12 25H6.5Q3 25 3 21.5V7.5Q3 4 6.5 4Z"/></svg><i class="nd"></i></span><span class="nav-label">Messages</span></button><button class="tab" data-go="profile"><span class="ti"><img class="pav" src="https://cdn.screenshottocode.com/4eU-kzOY2LsECPlvk9Eak.png" alt=""><i class="nd"></i></span><span class="nav-label">Profile</span></button></nav>
+<div class="toast" role="status" aria-live="polite"></div>
+</main>
+<script>
+
+const screens=[...document.querySelectorAll('.screen')];
+const tabs=[...document.querySelectorAll('.tab')];
+const positions=new Map();
+const toast=document.querySelector('.toast');
+let toastTimer;
+function announce(text){
+  toast.textContent=text;clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{toast.textContent=''},1800);
+}
+function showScreen(id){
+  const target=document.getElementById(id);
+  if(!target?.classList.contains('screen'))return;
+  const current=document.querySelector('.screen.active');
+  if(current){const scroll=current.querySelector('.page-scroll');positions.set(current.id,scroll.scrollTop);}
+  screens.forEach(screen=>screen.classList.toggle('active',screen===target));
+  tabs.forEach(tab=>{const on=tab.dataset.go===id;tab.classList.toggle('on',on);if(on)tab.setAttribute('aria-current','page');else tab.removeAttribute('aria-current')});
+  target.querySelector('.page-scroll').scrollTop=positions.get(id)||0;
+}
+tabs.forEach(tab=>tab.addEventListener('click',()=>showScreen(tab.dataset.go)));
+tabs[0].setAttribute('aria-current','page');
+const profile=document.querySelector('.profile-scroll');
+profile.addEventListener('scroll',()=>profile.classList.toggle('is-scrolled',profile.scrollTop>60),{passive:true});
+document.querySelectorAll('.favorite').forEach(button=>{
+  button.addEventListener('click',()=>{const saved=button.getAttribute('aria-pressed')!=='true';button.setAttribute('aria-pressed',String(saved));button.setAttribute('aria-label',saved?'Unsave home':'Save home')});
+});
+document.querySelectorAll('.msg-tabs .pill').forEach(button=>{
+  button.addEventListener('click',()=>{
+    button.parentElement.querySelectorAll('.pill').forEach(other=>{other.classList.toggle('on',other===button);other.setAttribute('aria-pressed',String(other===button))});
+    const filter=button.textContent.trim();
+    document.querySelectorAll('#messages .thread').forEach(thread=>{const support=!!thread.querySelector('.abnb-av');thread.hidden=filter==='Support'?!support:filter==='Traveling'?support:false});
+  });
+});
+document.querySelectorAll('.arrow-btn').forEach(button=>{
+  button.setAttribute('role','button');button.tabIndex=0;button.setAttribute('aria-label','Scroll homes');
+  const scroll=()=>{const list=button.closest('.sec-head').nextElementSibling;list.scrollBy({left:list.clientWidth*.8,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})};
+  button.addEventListener('click',scroll);
+  button.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();scroll()}});
+});
+document.querySelector('#profile .mini')?.addEventListener('click',()=>showScreen('trips'));
+document.querySelector('.view-more').addEventListener('click',()=>announce('All past trips are shown'));
+document.querySelectorAll('.review-btn').forEach(button=>button.addEventListener('click',()=>announce('Open Airbnb to leave a review.')));
+document.querySelector('.edit-btn').addEventListener('click',()=>announce('Wishlist editing is not connected in this preview.'));
+document.querySelectorAll('.icon-btn').forEach(button=>{
+  if(!button.getAttribute('aria-label'))button.setAttribute('aria-label',button===document.querySelector('.msg-head .icon-btn')?'Search messages':'Settings');
+});
+
+// Relative URLs support both username.github.io/ and username.github.io/repository/.
+// This requires HTTPS (GitHub Pages provides it) or localhost, not a file:// preview.
+if ('serviceWorker' in navigator && window.isSecureContext && /^https?:$/.test(location.protocol)) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js', {scope:'./', updateViaCache:'none'})
+      .catch(error => console.warn('Offline setup could not finish:', error));
+  });
+}
+
+</script>
+</body></html>

@@ -16,20 +16,22 @@
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" sizes="180x180">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..800&display=swap" rel="stylesheet">
 
 <style>
 
 /* EDIT THE SHARED COLORS, FONT, SPACING AND TAB HEIGHT HERE. */
 :root{
   --ink:#222;--muted:#717171;--red:#e90046;--line:#ebebeb;
-  --font:"Nunito Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
   --gutter:24px;--tab-height:62px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none;background:#fff}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
-body{color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.4;-webkit-font-smoothing:antialiased}
+body{color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.4;font-optical-sizing:auto;-webkit-font-smoothing:antialiased}
 button,input,a{font:inherit}
 button{border:0;color:inherit;background:none;cursor:pointer}
 button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--red);outline-offset:3px}
@@ -40,52 +42,67 @@ img{display:block;max-width:100%}
   /* Fill the available viewport, including when launched from the Home Screen. */
   position:fixed;inset:0;display:flex;flex-direction:column;isolation:isolate;
   width:100%;max-width:none;height:100vh;height:100dvh;min-height:0;min-width:0;
-  padding-top:env(safe-area-inset-top,0px);
   padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);
-  overflow:hidden;background:#fff;
+  overflow:hidden;background:#fff;container-type:inline-size;
 }
 /* Each active screen has a fixed header and one scrolling middle. */
-.screen{display:none;flex:1 1 0%;min-height:0;overflow:hidden;background:#fff}
+.screen{display:none;flex:1 1 0%;min-height:0;min-width:0;padding-top:var(--safe-top);overflow:hidden;background:#fff}
 .screen.active{display:flex;flex-direction:column}
 .page-header{position:relative;z-index:5;flex:0 0 auto;background:#fff}
 .page-scroll{flex:1 1 0%;min-height:0;overflow-y:auto;overflow-x:hidden;padding-bottom:24px;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-padding-top:12px}
 .page-scroll::-webkit-scrollbar,.hscroll::-webkit-scrollbar,.cats::-webkit-scrollbar{display:none}
 
-/* EXPLORE — dimensions calibrated to a 430px viewport. */
-.explore-header{background:linear-gradient(180deg,#e9e8e6 0%,#fafafa 78%,#fff 100%)}
-.search-wrap{padding:22px 20px 16px}
-.searchbar{height:58px;display:flex;align-items:center;justify-content:center;gap:9px;border-radius:40px;background:#fff;box-shadow:0 7px 22px #00000010;font-size:14px;font-weight:700}
-.searchbar .icon{width:18px;height:18px;stroke-width:2.2}
+/* EXPLORE — reference ratios at 430px: recent 120x114, service 96x96, home 185x176.
+   Change these variables to tune one rail without affecting the other pages. */
+#explore{
+  padding-top:0;
+  --gutter:clamp(18px,5.5814cqw,32px);
+  --rail-gap:clamp(10px,2.7907cqw,16px);
+  --recent-width:clamp(88px,27.907cqw,168px);
+  --service-size:clamp(72px,22.3256cqw,132px);
+  --home-width:clamp(140px,43.0233cqw,260px);
+  --tile-radius:clamp(17px,4.6512cqw,28px);
+  --section-font:clamp(16px,3.9535cqw,22px);
+  --card-font:clamp(12px,3.0233cqw,16px);
+  --detail-font:clamp(11px,2.7907cqw,14px);
+}
+.explore-header{background:#fff}
+.search-wrap{padding:max(22px,var(--safe-top)) clamp(18px,4.6512cqw,28px) 16px}
+.searchbar{height:clamp(52px,13.4884cqw,64px);display:flex;align-items:center;justify-content:center;gap:9px;border:1px solid #f3f3f3;border-radius:999px;background:#fff;box-shadow:0 7px 22px #0000000d;font-size:clamp(14px,3.2558cqw,17px);font-weight:600;letter-spacing:-.15px}
+.searchbar .icon{width:20px;height:20px;stroke:#222;stroke-width:2.35;flex:0 0 auto}
 .cats,.hscroll{display:flex;overflow-x:auto;scrollbar-width:none;overscroll-behavior-x:contain}
-.cats{gap:8px;padding:0 20px 12px}
-.cat{flex:0 0 auto;display:flex;align-items:center;gap:8px;height:40px;padding:0 15px;border:1px solid #f6f6f6;border-radius:30px;background:linear-gradient(#f5f5f5,#fff);box-shadow:0 2px 2px #0000001c,0 2px 7px #00000008;font-size:14px;white-space:nowrap}
+.cats{gap:8px;padding:0 clamp(18px,4.6512cqw,28px) 12px}
+.cat{flex:0 0 auto;display:flex;align-items:center;gap:8px;height:40px;padding:0 15px;border:1px solid #f6f6f6;border-radius:30px;background:linear-gradient(#f5f5f5,#fff);box-shadow:0 2px 2px #0000001c,0 2px 7px #00000008;font-size:14px;font-weight:400;white-space:nowrap}
 .cat.active{background:#e8e7e5;box-shadow:inset 0 2px 3px #00000025,0 1px 0 #fff}
-.cat .emo{font-size:18px;line-height:1}
-.sec-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:24px var(--gutter) 14px}
-.sec-head h2{font-size:17px;font-weight:800;letter-spacing:-.35px;line-height:24px}
-.arrow-btn{flex:0 0 28px;width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:#f3f3f3}
-.arrow-btn .icon{width:19px;height:19px}
-.hscroll{gap:12px;padding:0 var(--gutter) 3px;scroll-snap-type:x proximity;scroll-padding-left:var(--gutter)}
+.cat .cat-icon{display:block;width:22px;height:26px;flex:0 0 22px;overflow:visible}
+.sec-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:18px var(--gutter) 14px}
+.page-scroll>.sec-head:first-child{padding-top:14px;padding-bottom:12px}
+.sec-head h2{font-size:var(--section-font);font-weight:700;letter-spacing:-.35px;line-height:24px}
+.arrow-btn{flex:0 0 30px;width:30px;height:30px;display:grid;place-items:center;border-radius:50%;background:#f3f3f3;color:#111;transition:transform .15s ease,background .15s ease}
+.arrow-btn:active{transform:scale(.94);background:#e9e9e9}
+.arrow-btn .arrow-icon{width:21px;height:21px;stroke:currentColor;stroke-width:2.25;stroke-linecap:round;stroke-linejoin:round}
+.arrow-btn .icon{width:21px;height:21px;stroke:currentColor;stroke-width:2.25;stroke-linecap:round;stroke-linejoin:round}
+.hscroll{gap:var(--rail-gap);padding:0 var(--gutter) 8px;scroll-snap-type:x proximity;scroll-padding-left:var(--gutter);touch-action:pan-x pan-y pinch-zoom}
 .rv-card,.ph-card,.svc{position:relative;flex-shrink:0;scroll-snap-align:start}
-.rv-card{flex-basis:120px;width:120px}
-.rv-card>img{width:120px;height:114px;object-fit:cover;border-radius:20px}
-.rv-card h3{margin:8px 3px 0;font-size:13px;font-weight:700;line-height:15px}
-.rv-card p{margin:4px 3px 0;font-size:12px;line-height:16px;color:var(--muted);white-space:nowrap}
+.rv-card{flex-basis:var(--recent-width);width:var(--recent-width)}
+.rv-card>img{width:100%;height:auto;aspect-ratio:120 / 114;object-fit:cover;border-radius:var(--tile-radius);box-shadow:0 5px 18px #00000008}
+.rv-card h3{margin:8px 3px 0;font-size:var(--card-font);font-weight:600;line-height:1.18;letter-spacing:-.12px}
+.rv-card p{margin:4px 3px 0;font-size:var(--detail-font);line-height:16px;color:var(--muted);white-space:nowrap;letter-spacing:-.1px}
 .star{font-size:11px}
-.svc{flex-basis:96px;width:96px}
-.svc .box{width:96px;height:96px;display:grid;place-items:center;overflow:hidden;border-radius:20px;background:#f7f7f7}
-.svc .box img{width:75px;height:75px;object-fit:contain;mix-blend-mode:multiply}
-.svc span{display:block;margin:8px 3px 0;font-size:12px;font-weight:700;white-space:nowrap}
-.ph-card{flex-basis:185px;width:185px}
-.ph-card>img{width:185px;height:176px;object-fit:cover;border-radius:21px}
-.ph-card h3{margin:8px 3px 0;font-size:13px;font-weight:700}
-.ph-card p{margin:2px 3px 0;font-size:12px;color:var(--muted)}
+.svc{flex-basis:var(--service-size);width:var(--service-size)}
+.svc .box{width:100%;aspect-ratio:1;display:grid;place-items:center;overflow:hidden;border-radius:var(--tile-radius);background:#f7f7f7}
+.svc .box img{width:74%;height:74%;object-fit:contain;mix-blend-mode:multiply}
+.svc span{display:block;margin:8px 3px 0;font-size:var(--detail-font);line-height:18px;font-weight:600;letter-spacing:-.1px;white-space:nowrap}
+.ph-card{flex-basis:var(--home-width);width:var(--home-width)}
+.ph-card>img{width:100%;height:auto;aspect-ratio:185 / 176;object-fit:cover;border-radius:calc(var(--tile-radius) + 1px);box-shadow:0 5px 18px #00000008}
+.ph-card h3{margin:8px 3px 0;font-size:var(--card-font);font-weight:600}
+.ph-card p{margin:2px 3px 0;font-size:var(--detail-font);color:var(--muted)}
 .favorite{position:absolute;top:7px;right:7px;display:grid;place-items:center;width:26px;height:26px}
 .favorite .icon{width:21px;height:21px;fill:#0006;stroke:#fff;stroke-width:2.5;filter:drop-shadow(0 1px 2px #0004)}
 .favorite[aria-pressed="true"] .icon{fill:#ff385c}
 .ph-card .favorite{top:9px;right:10px}
 .ph-card .favorite .icon{width:26px;height:26px}
-.guest-badge{position:absolute;top:13px;left:10px;padding:4px 9px;border:1px solid #fff;border-radius:20px;background:#fffffff2;font-size:10px;line-height:14px;font-weight:800}
+.guest-badge{position:absolute;top:13px;left:10px;padding:4px 9px;border:1px solid #fff;border-radius:20px;background:#fffffff2;font-size:10px;line-height:14px;font-weight:700}
 
 /* WISHLISTS */
 .wl-top{display:flex;justify-content:flex-end;padding:28px 16px 0}
@@ -186,7 +203,7 @@ img{display:block;max-width:100%}
 .view-more{width:100%;height:40px;margin-top:20px;border-radius:13px;background:#f3f3f3;font-size:13px;font-weight:700}
 
 /* TAB BAR — occupies its own row; content never sits underneath it. */
-.tabbar{position:relative;z-index:20;flex:0 0 auto;display:flex;align-items:stretch;height:calc(var(--tab-height) + env(safe-area-inset-bottom,0px));padding:7px 0 calc(8px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:#fff}
+.tabbar{position:relative;z-index:20;flex:0 0 auto;display:flex;align-items:stretch;height:calc(var(--tab-height) + var(--safe-bottom));padding:7px 0 calc(8px + var(--safe-bottom));border-top:1px solid var(--line);background:#fff}
 .tab{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;color:#757672}
 .tab .ti{position:relative;display:flex;align-items:center;justify-content:center;height:28px;width:28px}
 .tab .ti .icon,.tab .abnb-ico{width:28px;height:28px}
@@ -196,14 +213,11 @@ img{display:block;max-width:100%}
 .tab img.pav{width:23px;height:23px;border-radius:50%;object-fit:cover}
 .tab.on img.pav{outline:1.5px solid var(--red);outline-offset:2px}
 .abnb-ico{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.toast{position:absolute;z-index:30;left:50%;bottom:calc(var(--tab-height) + env(safe-area-inset-bottom,0px) + 12px);max-width:88%;padding:9px 14px;border-radius:18px;background:#222f;color:#fff;font-size:12px;line-height:17px;text-align:center;transform:translateX(-50%);pointer-events:none}
+.toast{position:absolute;z-index:30;left:50%;bottom:calc(var(--tab-height) + var(--safe-bottom) + 12px);max-width:88%;padding:9px 14px;border-radius:18px;background:#222f;color:#fff;font-size:12px;line-height:17px;text-align:center;transform:translateX(-50%);pointer-events:none}
 .toast:empty{display:none}
 [hidden]{display:none!important}
 @media(max-width:390px){
  :root{--gutter:20px}
- .rv-card{flex-basis:110px;width:110px}.rv-card>img{width:110px;height:105px}
- .svc{flex-basis:88px;width:88px}.svc .box{width:88px;height:88px}
- .ph-card{flex-basis:167px;width:167px}.ph-card>img{width:167px;height:160px}
  .profile-card{padding:30px 16px}.pf-main{gap:18px}.pf-left{flex-basis:56%}
  .av-wrap,.av-wrap img{width:103px}.av-wrap img{height:103px}
  .stat span{font-size:12px}.pf-name{font-size:26px}
@@ -224,7 +238,103 @@ img{display:block;max-width:100%}
 <body><main class="phone">
 <section class="screen active" id="explore" aria-label="explore"><header class="page-header explore-header">
 <div class="search-wrap"><div class="searchbar"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="13.5" cy="13.5" r="10.5"/><path d="m21 21 9 9"/></svg>Start your search</div></div>
-<div class="cats"><div class="cat active"><span class="emo">🌎</span>All</div><div class="cat"><span class="emo">🏠</span>Homes</div><div class="cat"><span class="emo">🎈</span>Experiences</div><div class="cat"><span class="emo">🛎️</span>Services</div></div>
+<!-- Custom category SVGs: brass globe, modern home, hot-air balloon, steel service bell. -->
+<div class="cats">
+  <div class="cat active" data-category="all">
+    <svg xmlns="http://www.w3.org/2000/svg" class="cat-icon" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+      <defs>
+        <radialGradient id="cat-globe-sphere" cx="34%" cy="28%" r="76%"><stop stop-color="#fff9ce"/><stop offset=".58" stop-color="#ece5aa"/><stop offset="1" stop-color="#a3ae70"/></radialGradient>
+        <linearGradient id="cat-globe-brass" x1="0" y1="0" x2="1" y2=".8"><stop stop-color="#745024"/><stop offset=".3" stop-color="#e9bc65"/><stop offset=".52" stop-color="#fff0af"/><stop offset=".72" stop-color="#bc843a"/><stop offset="1" stop-color="#68461f"/></linearGradient>
+        <linearGradient id="cat-globe-land" x2=".7" y2="1"><stop stop-color="#b6b975"/><stop offset="1" stop-color="#6d8b52"/></linearGradient>
+        <clipPath id="cat-globe-clip"><circle cx="33" cy="27" r="17"/></clipPath>
+      </defs>
+      <ellipse cx="31" cy="60" rx="17" ry="2" fill="#333" opacity=".12"/>
+      <path d="M28 46h6v9l8 2v2H20v-2l8-2z" fill="url(#cat-globe-brass)"/>
+      <path d="M31 49v7M23 58h16" fill="none" stroke="#f0d89b" stroke-width="1.2"/>
+      <path d="M40 7C25-1 11 9 10 25S19 49 33 48" fill="none" stroke="#715023" stroke-width="4" stroke-linecap="round"/>
+      <path d="M40 7C25-1 11 9 10 25S19 49 33 48" fill="none" stroke="url(#cat-globe-brass)" stroke-width="2.9" stroke-linecap="round"/>
+      <path d="m39 5-2 6M27 42l-2 6" stroke="#8f6027" stroke-width="2.8" stroke-linecap="round"/>
+      <circle cx="33" cy="27" r="17" fill="url(#cat-globe-sphere)" stroke="#c69b50" stroke-width=".8"/>
+      <g clip-path="url(#cat-globe-clip)">
+        <path d="m20 15 6-3 4 3-1 4-4 1 1 4-3 3-4-2-4-5zm9 13 4 2 1 5-3 6-3-4-1-5zm9-15 9 3 5 9-7-1-2 3-5-1-3-5 2-2zm3 17 5 3-2 6-4 2-3-6z" fill="url(#cat-globe-land)"/>
+        <ellipse cx="33" cy="27" rx="8" ry="17" fill="none" stroke="#a99f59" stroke-width=".45" opacity=".5"/>
+        <path d="M16 26c10 4 24 4 34 0M20 17c8 4 18 4 26 0M20 37c8-4 18-4 26 0" fill="none" stroke="#a99f59" stroke-width=".45" opacity=".4"/>
+        <ellipse cx="26" cy="19" rx="7" ry="10" fill="#fff" opacity=".2" transform="rotate(25 26 19)"/>
+      </g>
+      <path d="M39 8c12 7 14 29 0 37" fill="none" stroke="#f1cc77" stroke-width="1" opacity=".8"/>
+      <path d="M24 46c3 3 6 4 10 3" fill="none" stroke="#ad7731" stroke-width="2.2" stroke-linecap="round"/>
+    </svg>
+    <span>All</span>
+  </div>
+  <div class="cat" data-category="homes">
+    <svg xmlns="http://www.w3.org/2000/svg" class="cat-icon" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="cat-house-wall" x2="1" y2=".4"><stop stop-color="#f5f5f2"/><stop offset=".7" stop-color="#c8cdce"/><stop offset="1" stop-color="#aeb5b8"/></linearGradient>
+        <linearGradient id="cat-house-door" x2="1" y2=".15"><stop stop-color="#d7254d"/><stop offset=".5" stop-color="#f25274"/><stop offset="1" stop-color="#9b1736"/></linearGradient>
+        <linearGradient id="cat-house-metal" x2=".3" y2="1"><stop stop-color="#778085"/><stop offset=".4" stop-color="#292e32"/><stop offset="1" stop-color="#15191c"/></linearGradient>
+      </defs>
+      <ellipse cx="32" cy="59" rx="23" ry="2" fill="#111" opacity=".12"/>
+      <path d="M14 25 22 23v34h-8z" fill="#838d93"/>
+      <path d="M22 23 49 15v42H22z" fill="url(#cat-house-wall)"/>
+      <path d="m49 15 5 2v40h-5z" fill="#687277"/>
+      <path d="M9 23 51 9l5 5-44 14z" fill="url(#cat-house-metal)"/>
+      <path d="M10 23 52 10" fill="none" stroke="#9da4a7" stroke-width="1"/>
+      <path d="M16 27v30M49 17v40" stroke="#30373c" stroke-width="2.2"/>
+      <path d="M23 38h12v19H23z" fill="#80203b"/>
+      <path d="M25 39h9v18h-9z" fill="url(#cat-house-door)"/>
+      <path d="M25 39v18" stroke="#ff8da2" stroke-width=".7"/>
+      <circle cx="31.5" cy="48" r=".9" fill="#f5c5cc"/>
+      <path d="M37 25h8v11h-8z" fill="#303b43"/>
+      <path d="M38.5 26.5h5v8h-5z" fill="#809397"/>
+      <path d="m39 27 4 0-4 5z" fill="#c2d2d2" opacity=".7"/>
+      <path d="M43 5v8" stroke="#2e3336" stroke-width="2.5" stroke-linecap="round"/>
+      <ellipse cx="43" cy="5" rx="2.5" ry="1.6" fill="#485056"/>
+      <path d="M12 57h44v2H12z" fill="#595e60"/>
+    </svg>
+    <span>Homes</span>
+  </div>
+  <div class="cat" data-category="experiences">
+    <svg xmlns="http://www.w3.org/2000/svg" class="cat-icon" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="cat-balloon-red" x2="1" y2=".3"><stop stop-color="#8c1643"/><stop offset=".22" stop-color="#ed3862"/><stop offset=".48" stop-color="#ff6377"/><stop offset=".78" stop-color="#d32b4b"/><stop offset="1" stop-color="#871532"/></linearGradient>
+        <linearGradient id="cat-balloon-gold" x2="1" y2=".1"><stop stop-color="#b57b31"/><stop offset=".42" stop-color="#ffe4a0"/><stop offset=".64" stop-color="#f6c665"/><stop offset="1" stop-color="#bb8237"/></linearGradient>
+        <linearGradient id="cat-balloon-basket" x2=".2" y2="1"><stop stop-color="#d6b78d"/><stop offset="1" stop-color="#876244"/></linearGradient>
+      </defs>
+      <ellipse cx="32" cy="61" rx="10" ry="1.6" fill="#333" opacity=".12"/>
+      <path d="M32 4C20 4 13 12 14 24c1 10 8 19 14 23h8c6-4 13-13 14-23C51 12 44 4 32 4Z" fill="url(#cat-balloon-red)" stroke="#852441" stroke-width=".6"/>
+      <path d="M32 4c-9 8-10 24-1 43h4c8-20 7-35-3-43Z" fill="url(#cat-balloon-gold)"/>
+      <path d="M27 5c-8 11-7 27 2 41M39 6c8 11 6 26-3 40" fill="none" stroke="#781e38" stroke-width=".65" opacity=".6"/>
+      <path d="M22 11c-3 3-4 8-4 12" fill="none" stroke="#ffb0bf" stroke-width="2" stroke-linecap="round" opacity=".72"/>
+      <path d="m27 46 2 8m8-8-2 8" fill="none" stroke="#745037" stroke-width="1.2"/>
+      <path d="M28 45h8l-1 3h-6z" fill="#934a35"/>
+      <path d="M26 53h12l-1 7H27z" fill="url(#cat-balloon-basket)" stroke="#775c44" stroke-width=".7"/>
+      <path d="M27 55h10m-9 2h8m-6-3v5m3-5v5m3-5v5" fill="none" stroke="#e9cfaa" stroke-width=".65"/>
+      <path d="M26 53h12" stroke="#eed6b6" stroke-width="1.1" stroke-linecap="round"/>
+    </svg>
+    <span>Experiences</span>
+  </div>
+  <div class="cat" data-category="services">
+    <svg xmlns="http://www.w3.org/2000/svg" class="cat-icon" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="cat-bell-steel" x2="1" y2=".15"><stop stop-color="#111a22"/><stop offset=".18" stop-color="#52616c"/><stop offset=".35" stop-color="#d6dfe4"/><stop offset=".49" stop-color="#8c9aa3"/><stop offset=".62" stop-color="#35434d"/><stop offset=".84" stop-color="#18232b"/><stop offset="1" stop-color="#080f15"/></linearGradient>
+        <linearGradient id="cat-bell-foot" x2="0" y2="1"><stop stop-color="#8e9ba4"/><stop offset=".25" stop-color="#dce1e4"/><stop offset=".43" stop-color="#34414a"/><stop offset="1" stop-color="#111820"/></linearGradient>
+      </defs>
+      <ellipse cx="32" cy="57" rx="24" ry="2.2" fill="#111" opacity=".15"/>
+      <path d="M28.8 17h6.4v8h-6.4z" fill="url(#cat-bell-steel)"/>
+      <ellipse cx="32" cy="16" rx="6" ry="2.8" fill="url(#cat-bell-steel)" stroke="#293740" stroke-width=".65"/>
+      <ellipse cx="31" cy="14.8" rx="3.7" ry=".8" fill="#b7c6ce"/>
+      <path d="M13 45c.3-14 7-23 19-23s18.7 9 19 23z" fill="url(#cat-bell-steel)" stroke="#25323c" stroke-width=".8"/>
+      <path d="M20 38c1-7 4-11 8-12" fill="none" stroke="#e7f0f3" stroke-width="1.6" stroke-linecap="round" opacity=".75"/>
+      <path d="M13 43c10 2 28 2 38 0" fill="none" stroke="#a6b3bb" stroke-width="1"/>
+      <path d="M11 45c7-2 35-2 42 0l2 6H9z" fill="url(#cat-bell-foot)" stroke="#26313a" stroke-width=".7"/>
+      <ellipse cx="32" cy="45" rx="21" ry="1.6" fill="#c1cbd0" opacity=".8"/>
+      <path d="M8 51h48v4H8z" fill="#171c21"/>
+      <path d="M9 51h46" stroke="#6b7880" stroke-width="1.1"/>
+      <path d="M12 55h40" stroke="#05080b" stroke-width="1.4" stroke-linecap="round"/>
+    </svg>
+    <span>Services</span>
+  </div>
+</div>
 </header><div class="page-scroll" tabindex="0" aria-label="explore content"><div class="sec-head"><h2>Recently viewed</h2><div class="arrow-btn"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M6 16h20M18 8l8 8-8 8"/></svg></div></div><div class="hscroll">
 <div class="rv-card"><img src="https://cdn.screenshottocode.com/7fyVdMoWoVu_TvwTNgFz8.png" alt=""><button class="favorite" type="button" aria-label="Save home" aria-pressed="false"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M16 28C13.7 26.4 2.5 18.6 2.5 11.5C2.5 7.2 5.35 4 9.25 4C12.05 4 14.2 6.4 16 8.25C17.8 6.4 19.95 4 22.75 4C26.65 4 29.5 7.2 29.5 11.5C29.5 18.6 18.3 26.4 16 28Z"/></svg></button><h3>Neartown<br>- Montrose</h3><p>1 bed · <span class="star" aria-hidden="true">★</span> 4.79</p></div><div class="rv-card"><img src="https://cdn.screenshottocode.com/AdyxBRUNTcBiJBRbsSb3d.png" alt=""><button class="favorite" type="button" aria-label="Save home" aria-pressed="true"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M16 28C13.7 26.4 2.5 18.6 2.5 11.5C2.5 7.2 5.35 4 9.25 4C12.05 4 14.2 6.4 16 8.25C17.8 6.4 19.95 4 22.75 4C26.65 4 29.5 7.2 29.5 11.5C29.5 18.6 18.3 26.4 16 28Z"/></svg></button><h3>Neartown<br>- Montrose</h3><p>1 bed · <span class="star" aria-hidden="true">★</span> 4.85</p></div><div class="rv-card"><img src="https://cdn.screenshottocode.com/aEk_sYmWL5pzAapEYboTb.png" alt=""><button class="favorite" type="button" aria-label="Save home" aria-pressed="true"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M16 28C13.7 26.4 2.5 18.6 2.5 11.5C2.5 7.2 5.35 4 9.25 4C12.05 4 14.2 6.4 16 8.25C17.8 6.4 19.95 4 22.75 4C26.65 4 29.5 7.2 29.5 11.5C29.5 18.6 18.3 26.4 16 28Z"/></svg></button><h3>Greater Heights</h3><p>1 bed · <span class="star" aria-hidden="true">★</span> 4.87</p></div><div class="rv-card"><img src="https://cdn.screenshottocode.com/D8f-By153vy_dOgKl8_UO.png" alt=""><button class="favorite" type="button" aria-label="Save home" aria-pressed="false"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" ><path d="M16 28C13.7 26.4 2.5 18.6 2.5 11.5C2.5 7.2 5.35 4 9.25 4C12.05 4 14.2 6.4 16 8.25C17.8 6.4 19.95 4 22.75 4C26.65 4 29.5 7.2 29.5 11.5C29.5 18.6 18.3 26.4 16 28Z"/></svg></button><h3>Neartown<br>- Montrose</h3><p>3 beds · <span class="star" aria-hidden="true">★</span> 4.9</p></div></div>
 <div class="sec-head"><h2>Find services near you</h2></div><div class="hscroll"><div class="svc"><div class="box"><img src="https://cdn.screenshottocode.com/QDydtQu8F-fPubMuOTdak.png" alt=""></div><span>Car rentals</span></div><div class="svc"><div class="box"><img src="https://cdn.screenshottocode.com/nvjj_ukZVXMDjM5OoY7IK.png" alt=""></div><span>Photography</span></div><div class="svc"><div class="box"><img src="https://cdn.screenshottocode.com/7WeT4kVhsi-AQsvfYklWb.png" alt=""></div><span>Chefs</span></div><div class="svc"><div class="box"><img src="https://cdn.screenshottocode.com/LJy1p5tMRRZ--rzfwcx4w.png" alt=""></div><span>Massage</span></div></div>

@@ -193,8 +193,8 @@
 				--home-width: clamp(140px, 43.0233cqw, 260px);
 				--tile-radius: clamp(17px, 4.6512cqw, 28px);
 				--section-font: clamp(16px, 3.9535cqw, 22px);
-				--card-font: clamp(13px, 3.0233cqw, 17px);
-				--detail-font: clamp(12px, 2.7907cqw, 15px);
+				--card-font: clamp(12px, 3.0233cqw, 16px);
+				--detail-font: clamp(11px, 2.7907cqw, 14px);
 			}
 
 			.explore-header
@@ -209,7 +209,7 @@
 
 			.searchbar
 			{
-				height: clamp(50px, 13.4884cqw, 60px);
+				height: clamp(52px, 13.4884cqw, 64px);
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -218,17 +218,17 @@
 				border-radius: 999px;
 				background: #fff;
 				box-shadow: 0 7px 22px #0000000d;
-				font-size: clamp(13.5px, 3.2558cqw, 16.5px);
-				font-weight: 550;
+				font-size: clamp(14px, 3.2558cqw, 17px);
+				font-weight: 600;
 				letter-spacing: -.15px
 			}
 
 			.searchbar .icon
 			{
-				width: 12.5px;
-				height: 12.5px;
+				width: 20px;
+				height: 20px;
 				stroke: #222;
-				stroke-width: 4;
+				stroke-width: 2.35;
 				flex: 0 0 auto
 			}
 
@@ -259,7 +259,7 @@
 				border-radius: 30px;
 				background: linear-gradient(#f5f5f5, #fff);
 				box-shadow: 0 2px 2px #0000001c, 0 2px 7px #00000008;
-				font-size: 13.5px;
+				font-size: 14px;
 				font-weight: 400;
 				white-space: nowrap
 			}
@@ -512,7 +512,7 @@
 				border: 1px solid #fff;
 				border-radius: 20px;
 				background: #fffffff2;
-				font-size: 10px;u
+				font-size: 10px;
 				line-height: 14px;
 				font-weight: 700
 			}
@@ -1221,6 +1221,11 @@
 				gap: 12px
 			}
 
+			.trip-card[data-href]
+			{
+				cursor: pointer
+			}
+
 			.trip-card
 			{
 				display: flex;
@@ -1232,19 +1237,6 @@
 				border-radius: 23px;
 				background: #fff;
 				box-shadow: 0 6px 17px #0000000d
-			}
-
-			.trip-card-link
-			{
-				color: inherit;
-				text-decoration: none;
-				cursor: pointer
-			}
-
-			.trip-card-link:focus-visible
-			{
-				outline: 2px solid var(--red);
-				outline-offset: 3px
 			}
 
 			.property-photo
@@ -1517,7 +1509,29 @@
 					width: calc(100% - 2 * var(--gutter))
 				}
 			}
-		</style>
+		
+
+/* Embedded trip detail: lives inside index.html so the card works without a second HTML file. */
+.trip-card-link{
+  color:inherit;
+  text-decoration:none;
+}
+.trip-card-link:visited{ color:inherit; }
+#tripdetail{
+  /* Trip map is intentionally full-bleed beneath the iPhone status area. */
+  padding-top:0;
+  background:#fff;
+}
+.trip-detail-frame{
+  display:block;
+  flex:1 1 0%;
+  width:100%;
+  min-width:0;
+  min-height:0;
+  border:0;
+  background:#fff;
+}
+</style>
 	</head>
 
 	<body>
@@ -1905,7 +1919,7 @@
 				<div class="page-scroll trips-content" tabindex="0" aria-label="Past trips">
 					<div class="trip-caption">Past trips</div>
 					<div class="trip-list">
-						<a class="trip-card trip-card-link" href="./test.html#trip" aria-label="Open Houston trip details for October 3 to 4, 2026"><img class="property-photo" src="https://cdn.screenshottocode.com/VWOT0uSgsRv7r62Kle8w6.png" alt="Bright Houston bedroom">
+						<a class="trip-card trip-card-link" href="#tripdetail" aria-label="Open Houston trip, October 3 to 4, 2026"><img class="property-photo" src="https://cdn.screenshottocode.com/VWOT0uSgsRv7r62Kle8w6.png" alt="Bright Houston bedroom">
 							<div>
 								<h2 class="trip-city">Houston</h2>
 								<p class="trip-date">Oct 3 – 4, 2026</p><img class="host-avatar" src="https://cdn.screenshottocode.com/4pNyUT0o_Rfos6bWL3TdI.png" alt="Host">
@@ -1929,7 +1943,7 @@
 								<p class="trip-date">Sep 22 – 23, 2026</p><img class="host-avatar" src="https://cdn.screenshottocode.com/4pNyUT0o_Rfos6bWL3TdI.png" alt="Host">
 							</div>
 						</article>
-						<article class="trip-card"><img class="property-photo" src="https://cdn.screenshottocode.com/VWOT0uSgsRv7r62Kle8w6.png" alt="Bright Houston bedroom">
+							<article class="trip-card"><img class="property-photo" src="https://cdn.screenshottocode.com/VWOT0uSgsRv7r62Kle8w6.png" alt="Bright Houston bedroom">
 							<div>
 								<h2 class="trip-city">Houston</h2>
 								<p class="trip-date">Aug 27 – 30, 2026</p><img class="host-avatar" src="https://cdn.screenshottocode.com/4pNyUT0o_Rfos6bWL3TdI.png" alt="Host">
@@ -2004,6 +2018,2410 @@
 					</div>
 				</div>
 			</section>
+			<section class="screen trip-detail-screen" id="tripdetail" aria-label="Houston trip details">
+				<iframe class="trip-detail-frame" title="Houston trip details" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+
+	&lt;head&gt;
+		&lt;meta charset=&quot;UTF-8&quot; /&gt;
+		&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=0&quot; /&gt;
+		&lt;title&gt;Houston trip&lt;/title&gt;
+		&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;&gt;
+		&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;
+		&lt;link href=&quot;https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..800&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
+		&lt;style&gt;
+			:root {
+				--ink: #222222;
+				--muted: #717171;
+				--line: #e8e8e8;
+				--soft: #f5f5f5;
+				--soft-2: #f1f1f1;
+				--accent: #e90046;
+				--red: #e90046;
+				--safe-bottom: env(safe-area-inset-bottom, 0px);
+				--tab-height: 62px;
+				--app-width: 430px;
+			}
+
+			* {
+				box-sizing: border-box;
+				-webkit-tap-highlight-color: transparent;
+			}
+
+			/* SCROLL LOCK: Completely locks the viewport from rubber-banding / pull-to-refresh */
+			html,
+			body {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100svh;
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+				overscroll-behavior: none;
+				touch-action: none;
+				color: var(--ink);
+				background: #fff;
+				font-family: &quot;DM Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;
+				-webkit-font-smoothing: antialiased;
+				text-rendering: geometricPrecision;
+			}
+
+			button,
+			input {
+				font: inherit;
+			}
+
+			button {
+				color: inherit;
+			}
+
+			svg {
+				display: block;
+			}
+
+			.app-shell {
+				position: relative;
+				width: 100%;
+				height: 100svh;
+				margin: 0 auto;
+				overflow: hidden;
+				background: #fff;
+				box-shadow: none;
+				isolation: isolate;
+			}
+
+			/* SCROLLABLE MIDDLE: Restores vertical scroll inside screen containers */
+			.screen {
+				position: absolute;
+				inset: 0;
+				display: none;
+				overflow-y: auto;
+				overflow-x: hidden;
+				background: #fff;
+				scrollbar-width: none;
+				-ms-overflow-style: none;
+				overscroll-behavior-y: contain;
+				touch-action: pan-y;
+				-webkit-overflow-scrolling: touch;
+			}
+
+			.screen::-webkit-scrollbar,
+			.trip-sheet::-webkit-scrollbar {
+				display: none;
+			}
+
+			.screen.active {
+				display: block;
+			}
+
+			/* Main trips/map view */
+			.main-screen {
+				overflow: hidden;
+				background: #fff;
+			}
+
+			.map-stage {
+				position: absolute;
+				inset: 0 0 auto;
+				height: 300px;
+				overflow: hidden;
+				background: #ecebe7;
+			}
+
+			.map-stage::after {
+				content: &quot;&quot;;
+				position: absolute;
+				inset: 0;
+				pointer-events: none;
+				background: rgba(0, 0, 0, 0);
+				transition: background .25s ease;
+			}
+
+			.map-stage img {
+				width: 100%;
+				height: 100%;
+				display: block;
+				object-fit: fill;
+				transition: filter .25s ease;
+			}
+
+			.map-hotspot {
+				position: absolute;
+				z-index: 2;
+				border: 0;
+				padding: 0;
+				background: transparent;
+				cursor: pointer;
+			}
+
+			.search-hotspot {
+				left: 32.5%;
+				top: 13%;
+				width: 35.5%;
+				height: 15.5%;
+				border-radius: 28px;
+			}
+
+			.stay-hotspot {
+				left: 42%;
+				top: 45%;
+				width: 18%;
+				height: 29%;
+				border-radius: 30px;
+			}
+
+			.trip-sheet {
+				position: absolute;
+				z-index: 5;
+				top: 300px;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				overflow-y: auto;
+				overscroll-behavior-y: contain;
+				touch-action: pan-y;
+				-webkit-overflow-scrolling: touch;
+				border-radius: 23px 23px 0 0;
+				background: #fff;
+				box-shadow: 0 -1px 3px rgba(0, 0, 0, .04);
+				transition: top .28s cubic-bezier(.2, .75, .25, 1);
+				scrollbar-width: none;
+			}
+
+			.main-screen.expanded .trip-sheet {
+				top: 34px;
+			}
+
+			.main-screen.expanded .map-stage::after {
+				background: rgba(0, 0, 0, .28);
+			}
+
+			.main-screen.expanded .map-stage img {
+				filter: brightness(.88);
+			}
+
+			.sheet-inner {
+				position: relative;
+				min-height: 650px;
+				padding-bottom: 115px;
+			}
+
+			.sheet-grabber {
+				position: absolute;
+				z-index: 3;
+				top: 6px;
+				left: 50%;
+				width: 28px;
+				height: 4px;
+				padding: 0;
+				border: 0;
+				border-radius: 99px;
+				background: #8a8a8a;
+				transform: translateX(-50%);
+				cursor: ns-resize;
+				touch-action: none;
+			}
+
+			.sheet-header {
+				position: relative;
+				height: 79px;
+			}
+
+			.sheet-header h1 {
+				position: absolute;
+				top: 27px;
+				left: 70px;
+				right: 70px;
+				margin: 0;
+				text-align: center;
+				font-size: 26px;
+				font-weight: 700;
+				line-height: 34px;
+				letter-spacing: -.8px;
+			}
+
+			.circle-back {
+				display: grid;
+				place-items: center;
+				width: 40px;
+				height: 40px;
+				padding: 0;
+				border: 0;
+				border-radius: 50%;
+				background: #f4f4f4;
+				cursor: pointer;
+			}
+
+			.sheet-back {
+				position: absolute;
+				top: 20px;
+				left: 18px;
+			}
+
+			.circle-back svg {
+				width: 20px;
+				height: 20px;
+				stroke-width: 2.15;
+			}
+
+			.stay-card {
+				height: 179px;
+				margin: 0 24px;
+				padding: 8px;
+				overflow: hidden;
+				border: 1px solid #f0f0f0;
+				border-radius: 21px;
+				background: #fff;
+				box-shadow: 0 8px 24px rgba(0, 0, 0, .10);
+				cursor: pointer;
+			}
+
+			.stay-overview {
+				display: flex;
+				height: 106px;
+			}
+
+			.stay-thumb {
+				flex: 0 0 106px;
+				width: 106px;
+				height: 106px;
+				object-fit: cover;
+				object-position: center;
+				border-radius: 12px;
+				background: #ddd;
+			}
+
+			.stay-copy {
+				min-width: 0;
+				padding: 20px 0 0 12px;
+			}
+
+			.stay-copy h2 {
+				margin: 0;
+				font-size: 18px;
+				font-weight: 700;
+				line-height: 22px;
+				letter-spacing: -.35px;
+			}
+
+			.stay-copy .host {
+				margin: 2px 0 0;
+				color: var(--muted);
+				font-size: 14px;
+				line-height: 20px;
+			}
+
+			.stay-copy .range {
+				margin: 13px 0 0;
+				color: var(--muted);
+				font-size: 13px;
+				line-height: 18px;
+			}
+
+			.stay-divider {
+				height: 1px;
+				margin-top: 8px;
+				background: var(--line);
+			}
+
+			.share-listing {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 10px;
+				width: 100%;
+				height: 40px;
+				margin-top: 8px;
+				padding: 0;
+				border: 0;
+				border-radius: 14px;
+				background: #f4f4f4;
+				font-size: 14px;
+				font-weight: 600;
+				cursor: pointer;
+			}
+
+			.share-listing svg {
+				width: 20px;
+				height: 20px;
+			}
+
+			.timeline {
+				position: relative;
+				height: 172px;
+				margin-top: 12px;
+			}
+
+			.event-card {
+				position: absolute;
+				right: 24px;
+				left: 66px;
+				display: flex;
+				align-items: center;
+				height: 80px;
+				border-radius: 21px;
+				background: #f5f5f5;
+			}
+
+			.event-card.first {
+				top: 0;
+			}
+
+			.event-card.second {
+				top: 92px;
+			}
+
+			.door-tile {
+				display: grid;
+				flex: 0 0 64px;
+				place-items: center;
+				width: 64px;
+				height: 64px;
+				margin-left: 8px;
+				overflow: hidden;
+				border-radius: 17px;
+				background: #eeeeee;
+			}
+
+			.door-tile img {
+				display: block;
+				width: 44px;
+				height: 55px;
+				object-fit: contain;
+			}
+
+			.door-tile img.closed {
+				width: 42px;
+				height: 53px;
+			}
+
+			.event-copy {
+				min-width: 0;
+				margin-left: 12px;
+			}
+
+			.event-copy h3 {
+				margin: 0;
+				font-size: 16px;
+				font-weight: 700;
+				line-height: 21px;
+				letter-spacing: -.2px;
+			}
+
+			.event-copy p {
+				margin: 2px 0 0;
+				color: var(--muted);
+				font-size: 13px;
+				line-height: 18px;
+				white-space: nowrap;
+			}
+
+			.date-node {
+				position: absolute;
+				left: 23px;
+				width: 38px;
+				text-align: center;
+			}
+
+			.date-node.first {
+				top: 15px;
+			}
+
+			.date-node.second {
+				top: 107px;
+			}
+
+			.date-node b {
+				display: block;
+				font-size: 11px;
+				font-weight: 700;
+				line-height: 15px;
+			}
+
+			.date-node span {
+				display: grid;
+				place-items: center;
+				width: 30px;
+				height: 30px;
+				margin: 4px auto 0;
+				border-radius: 50%;
+				color: #696969;
+				background: #eeeeee;
+				font-size: 13px;
+				font-weight: 700;
+			}
+
+			.date-line {
+				position: absolute;
+				top: 64px;
+				left: 38px;
+				width: 1px;
+				height: 43px;
+				background: #e3e3e3;
+			}
+
+			.houston-stamp {
+				display: block;
+				width: 180px;
+				height: 120px;
+				margin: 28px auto 0;
+				object-fit: contain;
+			}
+
+			.bottom-nav {
+				position: absolute;
+				z-index: 20;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				display: grid;
+				grid-template-columns: repeat(5, 1fr);
+				height: 100px;
+				padding: 9px 6px max(13px, env(safe-area-inset-bottom));
+				border-top: 1px solid #e7e7e7;
+				background: rgba(255, 255, 255, .985);
+			}
+
+			.nav-item {
+				position: relative;
+				display: flex;
+				align-items: center;
+				flex-direction: column;
+				gap: 3px;
+				min-width: 0;
+				padding: 0;
+				border: 0;
+				background: transparent;
+				color: #6b6b6b;
+				font-size: 13px;
+				line-height: 18px;
+				cursor: pointer;
+			}
+
+			.nav-icon-wrap {
+				position: relative;
+				display: grid;
+				place-items: center;
+				width: 34px;
+				height: 32px;
+			}
+
+			.nav-icon {
+				width: 27px;
+				height: 27px;
+				fill: none;
+				stroke: currentColor;
+				stroke-width: 1.7;
+			}
+
+			.nav-icon.search {
+				width: 28px;
+				height: 28px;
+			}
+
+			.nav-icon.heart {
+				width: 29px;
+				height: 27px;
+			}
+
+			.nav-icon.message {
+				width: 28px;
+				height: 27px;
+			}
+
+			.nav-item.active {
+				color: var(--accent);
+				font-weight: 600;
+			}
+
+			.airbnb-mark {
+				width: 31px;
+				height: 31px;
+				fill: none;
+				stroke: currentColor;
+				stroke-width: 2.25;
+				stroke-linecap: round;
+				stroke-linejoin: round;
+			}
+
+			.nav-dot {
+				position: absolute;
+				top: 0;
+				right: 0;
+				width: 6px;
+				height: 6px;
+				border: 1px solid #fff;
+				border-radius: 50%;
+				background: var(--accent);
+			}
+
+			.profile-avatar {
+				width: 25px;
+				height: 25px;
+				border-radius: 50%;
+				object-fit: cover;
+			}
+
+			/* Trip detail */
+			.detail-screen {
+				padding-bottom: 55px;
+			}
+
+			.detail-topbar {
+				position: relative;
+				height: 93px;
+			}
+
+			.detail-back {
+				position: absolute;
+				top: 30px;
+				left: 17px;
+				width: 39px;
+				height: 39px;
+			}
+
+			.detail-back svg {
+				width: 19px;
+				height: 19px;
+			}
+
+			.detail-main {
+				padding: 0 24px;
+			}
+
+			.listing-hero {
+				position: relative;
+				width: 100%;
+				overflow: hidden;
+				border-radius: 12px;
+				aspect-ratio: 3 / 2;
+				background: #eee;
+			}
+
+			.listing-hero img {
+				display: block;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+
+			.listing-heading h1 {
+				margin: 17px 0 0;
+				font-size: 22px;
+				font-weight: 700;
+				line-height: 29px;
+				letter-spacing: -.65px;
+			}
+
+			.listing-heading p {
+				margin: 1px 0 0;
+				color: var(--muted);
+				font-size: 16px;
+				line-height: 24px;
+			}
+
+			.dates-card {
+				position: relative;
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				height: 109px;
+				margin-top: 18px;
+				border-radius: 17px;
+				background: #f7f7f7;
+			}
+
+			.dates-card::after {
+				content: &quot;&quot;;
+				position: absolute;
+				top: 20px;
+				bottom: 20px;
+				left: 50%;
+				width: 1px;
+				background: #d4d4d4;
+			}
+
+			.date-col {
+				padding-top: 19px;
+			}
+
+			.date-col:first-child {
+				padding-left: 24px;
+				text-align: left;
+			}
+
+			.date-col:last-child {
+				padding-right: 24px;
+				text-align: right;
+			}
+
+			.date-col h2 {
+				margin: 0;
+				font-size: 16px;
+				font-weight: 700;
+				line-height: 22px;
+				letter-spacing: -.25px;
+			}
+
+			.date-col .day {
+				margin: 9px 0 0;
+				font-size: 16px;
+				line-height: 20px;
+			}
+
+			.date-col .time {
+				margin: 4px 0 0;
+				color: var(--muted);
+				font-size: 14px;
+				line-height: 18px;
+			}
+
+			.trip-info {
+				margin-top: 39px;
+			}
+
+			.info-row {
+				display: grid;
+				grid-template-columns: 40px minmax(0, 1fr);
+				min-height: 52px;
+				margin: 0 0 24px;
+				padding: 0;
+				border: 0;
+				background: transparent;
+				text-align: left;
+				cursor: pointer;
+			}
+
+			.info-row .info-icon {
+				width: 27px;
+				height: 27px;
+				margin-top: 1px;
+				fill: none;
+				stroke: #202020;
+				stroke-width: 1.75;
+				stroke-linecap: round;
+				stroke-linejoin: round;
+			}
+
+			.info-copy h2 {
+				margin: 0;
+				font-size: 17px;
+				font-weight: 600;
+				line-height: 23px;
+				letter-spacing: -.3px;
+			}
+
+			.info-copy p {
+				max-width: 100%;
+				margin: 3px 0 0;
+				overflow: hidden;
+				color: var(--muted);
+				font-size: 15.5px;
+				line-height: 21px;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+
+			.detail-divider {
+				height: 1px;
+				margin-top: 1px;
+				background: var(--line);
+			}
+
+			/* Reservation blocks integrated to flow smoothly */
+			.res-block h2 {
+				margin: 0;
+				font-size: 17px;
+				font-weight: 700;
+				line-height: 24px;
+				letter-spacing: -.35px;
+			}
+
+			.res-block p {
+				margin: 0;
+				font-size: 16px;
+				line-height: 24px;
+			}
+
+			.who-block {
+				margin-top: 31px;
+			}
+
+			.who-block p {
+				margin-top: 5px;
+			}
+
+			.code-block {
+				margin-top: 39px;
+			}
+
+			.code-block p {
+				margin-top: 10px;
+				letter-spacing: -.2px;
+			}
+
+			.policy-block {
+				margin-top: 37px;
+			}
+
+			.policy-copy {
+				margin-top: 11px !important;
+			}
+
+			.read-more {
+				margin-top: 5px;
+				padding: 0;
+				border: 0;
+				border-bottom: 1px solid currentColor;
+				background: transparent;
+				font-size: 16px;
+				font-weight: 600;
+				line-height: 22px;
+				cursor: pointer;
+			}
+
+			.policy-extra {
+				display: none;
+				margin-top: 8px !important;
+				color: var(--muted);
+				font-size: 14px !important;
+				line-height: 20px !important;
+			}
+
+			.policy-block.open .policy-extra {
+				display: block;
+			}
+
+			.pdf-row {
+				display: grid;
+				grid-template-columns: 32px minmax(0, 1fr) 20px;
+				align-items: center;
+				width: 100%;
+				height: 52px;
+				margin-top: 21px;
+				padding: 0;
+				border: 0;
+				background: transparent;
+				text-align: left;
+				cursor: pointer;
+			}
+
+			.pdf-row .globe {
+				width: 20px;
+				height: 20px;
+				fill: none;
+				stroke: #222;
+				stroke-width: 1.8;
+			}
+
+			.pdf-row span {
+				font-size: 16px;
+				line-height: 22px;
+				white-space: nowrap;
+			}
+
+			.pdf-row .chevron {
+				width: 17px;
+				height: 17px;
+				justify-self: end;
+				fill: none;
+				stroke: #8a8a8a;
+				stroke-width: 2.2;
+			}
+
+			.reservation-divider {
+				height: 1px;
+				margin-top: 23px;
+				background: var(--line);
+			}
+
+			.getting-section h2 {
+				margin: 35px 0 0;
+				font-size: 22px;
+				font-weight: 700;
+				line-height: 31px;
+				letter-spacing: -.55px;
+			}
+
+			.getting-map-link {
+				display: block;
+				margin-top: 29px;
+				border-radius: 9px;
+				overflow: hidden;
+			}
+
+			.getting-map-link img {
+				display: block;
+				width: 100%;
+				aspect-ratio: 3 / 2;
+				object-fit: cover;
+			}
+
+			.additional-details {
+				margin-top: 38px;
+				padding-bottom: 18px;
+			}
+
+			.additional-details h2 {
+				margin: 0 0 19px;
+				font-size: 22px;
+				font-weight: 700;
+				line-height: 31px;
+				letter-spacing: -.55px;
+			}
+
+			.detail-list {
+				border-top: 1px solid var(--line);
+			}
+
+			.detail-list button {
+				display: grid;
+				grid-template-columns: 32px minmax(0, 1fr) 18px;
+				align-items: center;
+				width: 100%;
+				min-height: 63px;
+				padding: 12px 0;
+				border: 0;
+				border-bottom: 1px solid var(--line);
+				background: transparent;
+				color: var(--ink);
+				text-align: left;
+				cursor: pointer;
+			}
+
+			.detail-list svg {
+				width: 21px;
+				height: 21px;
+				fill: none;
+				stroke: currentColor;
+				stroke-width: 1.7;
+				stroke-linecap: round;
+				stroke-linejoin: round;
+			}
+
+			.detail-list strong {
+				display: block;
+				font-size: 16px;
+				font-weight: 600;
+				line-height: 21px;
+			}
+
+			.detail-list small {
+				display: block;
+				margin-top: 2px;
+				color: var(--muted);
+				font-size: 13px;
+				line-height: 18px;
+			}
+
+			.detail-list .row-chevron {
+				width: 16px;
+				height: 16px;
+				justify-self: end;
+				color: #8a8a8a;
+				stroke-width: 2.2;
+			}
+
+			/* Lightweight interactive feedback */
+			.toast {
+				position: absolute;
+				z-index: 100;
+				bottom: 116px;
+				left: 50%;
+				max-width: calc(100% - 48px);
+				padding: 10px 15px;
+				border-radius: 22px;
+				color: #fff;
+				background: rgba(34, 34, 34, .94);
+				box-shadow: 0 4px 18px rgba(0, 0, 0, .18);
+				font-size: 13px;
+				line-height: 18px;
+				text-align: center;
+				white-space: nowrap;
+				opacity: 0;
+				pointer-events: none;
+				transform: translate(-50%, 10px);
+				transition: opacity .2s ease, transform .2s ease;
+			}
+
+			.toast.show {
+				opacity: 1;
+				transform: translate(-50%, 0);
+			}
+
+			.search-popover {
+				position: absolute;
+				z-index: 80;
+				top: 34px;
+				right: 20px;
+				left: 20px;
+				display: none;
+				gap: 9px;
+				align-items: center;
+				padding: 10px 12px;
+				border-radius: 18px;
+				background: #fff;
+				box-shadow: 0 7px 30px rgba(0, 0, 0, .2);
+			}
+
+			.search-popover.open {
+				display: flex;
+			}
+
+			.search-popover svg {
+				flex: 0 0 20px;
+				width: 20px;
+				height: 20px;
+				fill: none;
+				stroke: #222;
+				stroke-width: 2;
+			}
+
+			.search-popover input {
+				min-width: 0;
+				flex: 1;
+				height: 34px;
+				border: 0;
+				outline: 0;
+				font-size: 15px;
+			}
+
+			.search-popover button {
+				width: 31px;
+				height: 31px;
+				border: 0;
+				border-radius: 50%;
+				background: #f1f1f1;
+				cursor: pointer;
+			}
+
+			@media (max-width: 430px) {
+				.map-stage {
+					height: 69.767vw;
+				}
+
+				.trip-sheet {
+					top: 69.767vw;
+				}
+			}
+
+			@media (max-width: 360px) {
+				.stay-card {
+					margin-right: 18px;
+					margin-left: 18px;
+				}
+
+				.event-card {
+					right: 18px;
+				}
+
+				.stay-thumb {
+					flex-basis: 96px;
+					width: 96px;
+				}
+
+				.stay-copy {
+					padding-left: 10px;
+				}
+
+				.event-copy {
+					margin-left: 9px;
+				}
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+
+				*,
+				*::before,
+				*::after {
+					scroll-behavior: auto !important;
+					transition: none !important;
+				}
+			}
+			/* =========================================================
+   DRAGGABLE TRIP SHEET — NATIVE APP STYLE
+   ========================================================= */
+
+.trip-sheet {
+	touch-action: none !important;
+	will-change: top;
+}
+
+.trip-sheet.is-dragging {
+	transition: none !important;
+	cursor: grabbing;
+}
+
+.trip-sheet.is-settling {
+	/* slight overshoot gives it the native spring/bounce feeling */
+	transition: top .42s cubic-bezier(.22, 1.14, .32, 1) !important;
+}
+
+/* Gradually darken the map as the white panel covers it */
+.main-screen .map-stage::after {
+	background: rgba(0, 0, 0, .28) !important;
+	opacity: var(--sheet-progress, 0);
+	transition: opacity .06s linear;
+}
+
+/* Don&#x27;t suddenly change brightness when &quot;expanded&quot; is applied */
+.main-screen.expanded .map-stage img {
+	filter: none !important;
+}
+
+/* Entire white panel can be grabbed */
+.trip-sheet,
+.sheet-header,
+.sheet-inner {
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+			/* PRIMARY TAB BAR — matched to index.html */
+			.tabbar {
+				position: absolute;
+				z-index: 120;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				display: flex;
+				align-items: stretch;
+				height: calc(var(--tab-height) + var(--safe-bottom));
+				padding: 7px 0 calc(8px + var(--safe-bottom));
+				border-top: 1px solid #ebebeb;
+				background: #fff;
+			}
+			.tab {
+				position: relative;
+				flex: 1;
+				min-width: 0;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 4px;
+				padding: 0;
+				border: 0;
+				background: none;
+				color: #757672;
+				cursor: pointer;
+			}
+			.tab .ti {
+				position: relative;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				height: 28px;
+				width: 30px;
+			}
+			.tab .ti .icon,
+			.tab .abnb-ico {
+				width: 30px;
+				height: 30px;
+				flex-shrink: 0;
+				fill: none;
+				stroke: currentColor;
+				stroke-linecap: round;
+				stroke-linejoin: round;
+			}
+			.tab .ti .icon { stroke-width: 1.8; }
+			.tab .nav-label {
+				font-size: 10px;
+				line-height: 14px;
+				font-weight: 400;
+				white-space: nowrap;
+			}
+			.tab.on { color: var(--red); }
+			.tab.on .nav-label { font-weight: 700; }
+			.tab .nd {
+				position: absolute;
+				top: 0;
+				right: -4px;
+				width: 6px;
+				height: 6px;
+				border-radius: 50%;
+				background: var(--red);
+			}
+			.tab img.pav {
+				width: 25px;
+				height: 25px;
+				border-radius: 50%;
+				object-fit: cover;
+			}
+			.tab.on img.pav {
+				outline: 1.5px solid var(--red);
+				outline-offset: 2px;
+			}
+			.abnb-ico {
+				fill: none;
+				stroke: currentColor;
+				stroke-width: 1.6;
+				stroke-linecap: round;
+				stroke-linejoin: round;
+			}
+			.screen { bottom: calc(var(--tab-height) + var(--safe-bottom)); }
+
+		&lt;/style&gt;
+	&lt;/head&gt;
+
+	&lt;body&gt;
+		&lt;main id=&quot;app&quot; class=&quot;app-shell&quot; aria-live=&quot;polite&quot;&gt;
+			&lt;section id=&quot;tripView&quot; class=&quot;screen main-screen active&quot; aria-label=&quot;Houston trip map&quot;&gt;
+				&lt;div class=&quot;map-stage&quot;&gt;
+					&lt;img src=&quot;https://cdn.screenshottocode.com/X_Gc98vDrffOhSM0h-eq5.png&quot; alt=&quot;Map of Houston centered on Montrose&quot; /&gt;
+					&lt;button class=&quot;map-hotspot search-hotspot&quot; id=&quot;mapSearch&quot; aria-label=&quot;Search the map&quot;&gt;&lt;/button&gt;
+					&lt;button class=&quot;map-hotspot stay-hotspot&quot; id=&quot;mapStay&quot; aria-label=&quot;Show your stay&quot;&gt;&lt;/button&gt;
+				&lt;/div&gt;
+
+				&lt;section class=&quot;trip-sheet&quot; id=&quot;tripSheet&quot; aria-label=&quot;Houston trip&quot;&gt;
+					&lt;div class=&quot;sheet-inner&quot;&gt;
+						&lt;button class=&quot;sheet-grabber&quot; id=&quot;sheetGrabber&quot; aria-label=&quot;Expand or collapse trip details&quot;&gt;&lt;/button&gt;
+						&lt;header class=&quot;sheet-header&quot;&gt;
+							&lt;button class=&quot;circle-back sheet-back&quot; id=&quot;mainBack&quot; aria-label=&quot;Back&quot;&gt;
+								&lt;svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;
+									&lt;path d=&quot;M19 12H5M11 6l-6 6 6 6&quot; /&gt;
+								&lt;/svg&gt;
+							&lt;/button&gt;
+							&lt;h1&gt;Houston&lt;/h1&gt;
+						&lt;/header&gt;
+
+						&lt;article class=&quot;stay-card&quot; id=&quot;stayCard&quot; tabindex=&quot;0&quot; role=&quot;button&quot; aria-label=&quot;Open your stay details&quot;&gt;
+							&lt;div class=&quot;stay-overview&quot;&gt;
+								&lt;img class=&quot;stay-thumb&quot; src=&quot;https://cdn.screenshottocode.com/RGomUimJyCfqfQXI_FVZG.jpg&quot; alt=&quot;Bright Houston studio bedroom&quot; /&gt;
+								&lt;div class=&quot;stay-copy&quot;&gt;
+									&lt;h2&gt;Your stay&lt;/h2&gt;
+									&lt;p class=&quot;host&quot;&gt;Hosted by Phillip&lt;/p&gt;
+									&lt;p class=&quot;range&quot;&gt;Oct 3 – 4&lt;/p&gt;
+								&lt;/div&gt;
+							&lt;/div&gt;
+							&lt;div class=&quot;stay-divider&quot;&gt;&lt;/div&gt;
+							&lt;button class=&quot;share-listing&quot; id=&quot;shareListing&quot; aria-label=&quot;Share listing&quot;&gt;
+								&lt;svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;
+									&lt;path d=&quot;M12 16V3M8 7l4-4 4 4M5 12v8h14v-8&quot; /&gt;
+								&lt;/svg&gt;
+								&lt;span&gt;Share listing&lt;/span&gt;
+							&lt;/button&gt;
+						&lt;/article&gt;
+
+						&lt;section class=&quot;timeline&quot; aria-label=&quot;Stay timeline&quot;&gt;
+							&lt;div class=&quot;date-line&quot;&gt;&lt;/div&gt;
+							&lt;div class=&quot;date-node first&quot;&gt;&lt;b&gt;Sat&lt;/b&gt;&lt;span&gt;3&lt;/span&gt;&lt;/div&gt;
+							&lt;div class=&quot;date-node second&quot;&gt;&lt;b&gt;Sun&lt;/b&gt;&lt;span&gt;4&lt;/span&gt;&lt;/div&gt;
+
+							&lt;article class=&quot;event-card first&quot;&gt;
+								&lt;div class=&quot;door-tile&quot;&gt;&lt;img src=&quot;https://cdn.screenshottocode.com/hOQ4s6_uVUlVcLRt4rcLJ.png&quot; alt=&quot;Open door&quot; /&gt;&lt;/div&gt;
+								&lt;div class=&quot;event-copy&quot;&gt;
+									&lt;h3&gt;Check-in&lt;/h3&gt;
+									&lt;p&gt;After 4:00 PM&lt;/p&gt;
+								&lt;/div&gt;
+							&lt;/article&gt;
+							&lt;article class=&quot;event-card second&quot;&gt;
+								&lt;div class=&quot;door-tile&quot;&gt;&lt;img class=&quot;closed&quot; src=&quot;https://cdn.screenshottocode.com/NFNCd1_X42kAutamukd7a.png&quot; alt=&quot;Closed door&quot; /&gt;&lt;/div&gt;
+								&lt;div class=&quot;event-copy&quot;&gt;
+									&lt;h3&gt;Checkout&lt;/h3&gt;
+									&lt;p&gt;Before 10:00 AM&lt;/p&gt;
+								&lt;/div&gt;
+							&lt;/article&gt;
+						&lt;/section&gt;
+
+						&lt;img class=&quot;houston-stamp&quot; src=&quot;https://cdn.screenshottocode.com/Ae8kErGPqP336FBxHYO7l.png&quot; alt=&quot;Houston travel stamp&quot; /&gt;
+					&lt;/div&gt;
+				&lt;/section&gt;
+			&lt;/section&gt;
+
+			&lt;section id=&quot;detailView&quot; class=&quot;screen detail-screen&quot; aria-label=&quot;Trip details&quot;&gt;
+				&lt;header class=&quot;detail-topbar&quot;&gt;
+					&lt;button class=&quot;circle-back detail-back&quot; data-back=&quot;trip&quot; aria-label=&quot;Back to Houston trip&quot;&gt;
+						&lt;svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;
+							&lt;path d=&quot;M19 12H5M11 6l-6 6 6 6&quot; /&gt;
+						&lt;/svg&gt;
+					&lt;/button&gt;
+				&lt;/header&gt;
+				&lt;div class=&quot;detail-main&quot;&gt;
+					&lt;div class=&quot;listing-hero&quot;&gt;
+						&lt;img src=&quot;https://cdn.screenshottocode.com/JMakdjuSVmw0GYttHU0Jf.png&quot; alt=&quot;Home in Houston&quot; /&gt;
+					&lt;/div&gt;
+					&lt;div class=&quot;listing-heading&quot;&gt;
+						&lt;h1&gt;Home in Houston&lt;/h1&gt;
+						&lt;p&gt;Hosted by Phillip&lt;/p&gt;
+					&lt;/div&gt;
+
+					&lt;section class=&quot;dates-card&quot; aria-label=&quot;Reservation dates&quot;&gt;
+						&lt;div class=&quot;date-col&quot;&gt;
+							&lt;h2&gt;Check-in&lt;/h2&gt;
+							&lt;p class=&quot;day&quot;&gt;Sat, Oct 3&lt;/p&gt;
+							&lt;p class=&quot;time&quot;&gt;4:00 PM&lt;/p&gt;
+						&lt;/div&gt;
+						&lt;div class=&quot;date-col&quot;&gt;
+							&lt;h2&gt;Checkout&lt;/h2&gt;
+							&lt;p class=&quot;day&quot;&gt;Sun, Oct 4&lt;/p&gt;
+							&lt;p class=&quot;time&quot;&gt;10:00 AM&lt;/p&gt;
+						&lt;/div&gt;
+					&lt;/section&gt;
+
+					&lt;section class=&quot;trip-info&quot; aria-label=&quot;Trip information&quot;&gt;
+						&lt;button class=&quot;info-row&quot; id=&quot;directionsButton&quot;&gt;
+							&lt;svg class=&quot;info-icon&quot; viewBox=&quot;0 0 32 36&quot;&gt;
+								&lt;path d=&quot;M16 34S4 23.3 4 14.4C4 7.3 9.2 2 16 2s12 5.3 12 12.4C28 23.3 16 34 16 34Z&quot; /&gt;
+								&lt;circle cx=&quot;16&quot; cy=&quot;14&quot; r=&quot;4.3&quot; /&gt;
+							&lt;/svg&gt;
+							&lt;span class=&quot;info-copy&quot;&gt;
+								&lt;h2&gt;Getting there&lt;/h2&gt;
+								&lt;p&gt;1903 Commonwealth Street&lt;/p&gt;
+							&lt;/span&gt;
+						&lt;/button&gt;
+						&lt;button class=&quot;info-row&quot; id=&quot;messageHost&quot;&gt;
+							&lt;svg class=&quot;info-icon&quot; viewBox=&quot;0 0 32 31&quot;&gt;
+								&lt;path d=&quot;M4 3h24a2 2 0 0 1 2 2v17a2 2 0 0 1-2 2h-8l-4.5 4L11 24H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z&quot; /&gt;
+							&lt;/svg&gt;
+							&lt;span class=&quot;info-copy&quot;&gt;
+								&lt;h2&gt;Message your host&lt;/h2&gt;
+								&lt;p&gt;Phillip&lt;/p&gt;
+							&lt;/span&gt;
+						&lt;/button&gt;
+						&lt;button class=&quot;info-row&quot; id=&quot;yourPlace&quot;&gt;
+							&lt;svg class=&quot;info-icon&quot; viewBox=&quot;0 0 34 33&quot;&gt;
+								&lt;path d=&quot;M3 5h28v18H3zM7 5V2M27 5V2M12 11h10v8H12zM17 23v6M12 30h10M8 27h18&quot; /&gt;
+							&lt;/svg&gt;
+							&lt;span class=&quot;info-copy&quot;&gt;
+								&lt;h2&gt;Your place&lt;/h2&gt;
+								&lt;p&gt;Montrose Blissful Studio | Medical Center 13!&lt;/p&gt;
+							&lt;/span&gt;
+						&lt;/button&gt;
+					&lt;/section&gt;
+
+					&lt;div class=&quot;detail-divider&quot;&gt;&lt;/div&gt;
+
+					&lt;!-- MERGED: Reservation Details natively viewable by scrolling --&gt;
+					&lt;div class=&quot;reservation-content&quot; style=&quot;margin-top: 32px; padding-bottom: 24px;&quot;&gt;
+						&lt;h2 style=&quot;font-size: 24px; font-weight: 700; margin-bottom: 30px;&quot;&gt;Reservation details&lt;/h2&gt;
+
+						&lt;section class=&quot;res-block who-block&quot; style=&quot;margin-top: 0;&quot;&gt;
+							&lt;h2&gt;Who’s coming&lt;/h2&gt;
+							&lt;p&gt;1 guest&lt;/p&gt;
+						&lt;/section&gt;
+						&lt;section class=&quot;res-block code-block&quot;&gt;
+							&lt;h2&gt;Confirmation code&lt;/h2&gt;
+							&lt;p&gt;HMQKT2TACB&lt;/p&gt;
+						&lt;/section&gt;
+						&lt;section class=&quot;res-block policy-block&quot; id=&quot;policyBlockDetail&quot;&gt;
+							&lt;h2&gt;Cancellation policy&lt;/h2&gt;
+							&lt;p class=&quot;policy-copy&quot;&gt;This reservation is non-refundable.&lt;/p&gt;
+							&lt;button class=&quot;read-more&quot; onclick=&quot;togglePolicy(&#x27;policyBlockDetail&#x27;)&quot;&gt;Read more&lt;/button&gt;
+							&lt;p class=&quot;policy-extra&quot;&gt;Changes and cancellations are not eligible for a refund.&lt;/p&gt;
+						&lt;/section&gt;
+
+						&lt;button class=&quot;pdf-row&quot; onclick=&quot;downloadPDF()&quot;&gt;
+							&lt;svg class=&quot;globe&quot; viewBox=&quot;0 0 24 24&quot;&gt;
+								&lt;circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;9&quot; /&gt;
+								&lt;path d=&quot;M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18&quot; /&gt;
+							&lt;/svg&gt;
+							&lt;span&gt;Get a PDF for visa purposes&lt;/span&gt;
+							&lt;svg class=&quot;chevron&quot; viewBox=&quot;0 0 20 20&quot;&gt;
+								&lt;path d=&quot;m7 3 7 7-7 7&quot; /&gt;
+							&lt;/svg&gt;
+						&lt;/button&gt;
+						&lt;div class=&quot;reservation-divider&quot;&gt;&lt;/div&gt;
+
+						&lt;section class=&quot;getting-section&quot; id=&quot;gettingThereDetail&quot;&gt;
+							&lt;h2&gt;Getting there&lt;/h2&gt;
+							&lt;a class=&quot;getting-map-link&quot; href=&quot;https://maps.google.com/?q=1903+Commonwealth+Street+Houston&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; aria-label=&quot;Open 1903 Commonwealth Street in Google Maps&quot;&gt;
+								&lt;img src=&quot;https://cdn.screenshottocode.com/nRnli9KLjd7A-CbsrUtKG.png&quot; alt=&quot;Map showing the verified listing in Montrose, Houston&quot; /&gt;
+							&lt;/a&gt;
+						&lt;/section&gt;
+
+						&lt;section class=&quot;additional-details&quot; aria-label=&quot;Additional reservation details&quot;&gt;
+							&lt;h2&gt;More reservation details&lt;/h2&gt;
+							&lt;div class=&quot;detail-list&quot;&gt;
+								&lt;button type=&quot;button&quot; onclick=&quot;showToast(&#x27;Check-in instructions&#x27;)&quot;&gt;
+									&lt;svg viewBox=&quot;0 0 24 24&quot;&gt;
+										&lt;path d=&quot;M4 21V4h12v17M8 12h4M16 8h4v13M2 21h20&quot; /&gt;
+									&lt;/svg&gt;
+									&lt;span&gt;&lt;strong&gt;Check-in instructions&lt;/strong&gt;&lt;small&gt;Instructions are available before your stay&lt;/small&gt;&lt;/span&gt;
+									&lt;svg class=&quot;row-chevron&quot; viewBox=&quot;0 0 20 20&quot;&gt;
+										&lt;path d=&quot;m7 3 7 7-7 7&quot; /&gt;
+									&lt;/svg&gt;
+								&lt;/button&gt;
+								&lt;button type=&quot;button&quot; onclick=&quot;showToast(&#x27;House rules&#x27;)&quot;&gt;
+									&lt;svg viewBox=&quot;0 0 24 24&quot;&gt;
+										&lt;path d=&quot;m3 11 9-8 9 8v10H3zM9 21v-6h6v6&quot; /&gt;
+									&lt;/svg&gt;
+									&lt;span&gt;&lt;strong&gt;House rules&lt;/strong&gt;&lt;small&gt;Review the rules for this home&lt;/small&gt;&lt;/span&gt;
+									&lt;svg class=&quot;row-chevron&quot; viewBox=&quot;0 0 20 20&quot;&gt;
+										&lt;path d=&quot;m7 3 7 7-7 7&quot; /&gt;
+									&lt;/svg&gt;
+								&lt;/button&gt;
+								&lt;button type=&quot;button&quot; onclick=&quot;showToast(&#x27;Payment details&#x27;)&quot;&gt;
+									&lt;svg viewBox=&quot;0 0 24 24&quot;&gt;
+										&lt;rect x=&quot;3&quot; y=&quot;5&quot; width=&quot;18&quot; height=&quot;14&quot; rx=&quot;2&quot; /&gt;
+										&lt;path d=&quot;M3 10h18M7 15h4&quot; /&gt;
+									&lt;/svg&gt;
+									&lt;span&gt;&lt;strong&gt;Payment details&lt;/strong&gt;&lt;small&gt;Your receipt and payment information&lt;/small&gt;&lt;/span&gt;
+									&lt;svg class=&quot;row-chevron&quot; viewBox=&quot;0 0 20 20&quot;&gt;
+										&lt;path d=&quot;m7 3 7 7-7 7&quot; /&gt;
+									&lt;/svg&gt;
+								&lt;/button&gt;
+							&lt;/div&gt;
+						&lt;/section&gt;
+					&lt;/div&gt;
+				&lt;/div&gt;
+			&lt;/section&gt;
+
+
+			&lt;nav class=&quot;tabbar&quot; aria-label=&quot;Primary navigation&quot;&gt;
+				&lt;button class=&quot;tab&quot; data-go=&quot;explore&quot;&gt;&lt;span class=&quot;ti&quot;&gt;&lt;svg class=&quot;icon&quot; viewBox=&quot;0 0 32 32&quot; aria-hidden=&quot;true&quot; focusable=&quot;false&quot;&gt;&lt;circle cx=&quot;13.5&quot; cy=&quot;13.5&quot; r=&quot;10.5&quot; /&gt;&lt;path d=&quot;m21 21 9 9&quot; /&gt;&lt;/svg&gt;&lt;/span&gt;&lt;span class=&quot;nav-label&quot;&gt;Explore&lt;/span&gt;&lt;/button&gt;
+				&lt;button class=&quot;tab&quot; data-go=&quot;wishlists&quot;&gt;&lt;span class=&quot;ti&quot;&gt;&lt;svg class=&quot;icon&quot; viewBox=&quot;0 0 32 32&quot; aria-hidden=&quot;true&quot; focusable=&quot;false&quot;&gt;&lt;path d=&quot;M16 28C13.7 26.4 2.5 18.6 2.5 11.5C2.5 7.2 5.35 4 9.25 4C12.05 4 14.2 6.4 16 8.25C17.8 6.4 19.95 4 22.75 4C26.65 4 29.5 7.2 29.5 11.5C29.5 18.6 18.3 26.4 16 28Z&quot; /&gt;&lt;/svg&gt;&lt;/span&gt;&lt;span class=&quot;nav-label&quot;&gt;Wishlists&lt;/span&gt;&lt;/button&gt;
+				&lt;button class=&quot;tab on&quot; data-go=&quot;trips&quot; aria-current=&quot;page&quot;&gt;&lt;span class=&quot;ti&quot;&gt;&lt;svg class=&quot;abnb-ico&quot; viewBox=&quot;0 0 32 32&quot;&gt;&lt;path d=&quot;M16 2c-2.2 0-3.8 1.6-5.1 4.3C8.9 10.4 4.4 19.9 3.6 22.6c-.8 2.6.6 5 3.2 5 1.7 0 3.4-.9 5.2-2.9.4-.4.8-.9 1.2-1.4 1-1.2 2-2.5 2.8-3.7.8 1.2 1.8 2.5 2.8 3.7.4.5.8 1 1.2 1.4 1.8 2 3.5 2.9 5.2 2.9 2.6 0 4-2.4 3.2-5-.8-2.7-5.3-12.2-7.3-16.3C19.8 3.6 18.2 2 16 2zm0 9.6c1.3 0 2.3 1.1 2.3 2.8 0 1.7-1 3.8-2.3 6-1.3-2.2-2.3-4.3-2.3-6 0-1.7 1-2.8 2.3-2.8z&quot; /&gt;&lt;/svg&gt;&lt;i class=&quot;nd&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;span class=&quot;nav-label&quot;&gt;Trips&lt;/span&gt;&lt;/button&gt;
+				&lt;button class=&quot;tab&quot; data-go=&quot;messages&quot;&gt;&lt;span class=&quot;ti&quot;&gt;&lt;svg class=&quot;icon&quot; viewBox=&quot;0 0 32 32&quot; aria-hidden=&quot;true&quot; focusable=&quot;false&quot;&gt;&lt;path d=&quot;M6.5 4H25.5Q29 4 29 7.5V21.5Q29 25 25.5 25H20L16 29L12 25H6.5Q3 25 3 21.5V7.5Q3 4 6.5 4Z&quot; /&gt;&lt;/svg&gt;&lt;i class=&quot;nd&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;span class=&quot;nav-label&quot;&gt;Messages&lt;/span&gt;&lt;/button&gt;
+				&lt;button class=&quot;tab&quot; data-go=&quot;profile&quot;&gt;&lt;span class=&quot;ti&quot;&gt;&lt;img class=&quot;pav&quot; src=&quot;https://cdn.screenshottocode.com/4eU-kzOY2LsECPlvk9Eak.png&quot; alt=&quot;&quot;&gt;&lt;i class=&quot;nd&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;span class=&quot;nav-label&quot;&gt;Profile&lt;/span&gt;&lt;/button&gt;
+			&lt;/nav&gt;
+
+			&lt;form class=&quot;search-popover&quot; id=&quot;searchPopover&quot; role=&quot;search&quot;&gt;
+				&lt;svg viewBox=&quot;0 0 24 24&quot;&gt;
+					&lt;circle cx=&quot;10.5&quot; cy=&quot;10.5&quot; r=&quot;6.5&quot; /&gt;
+					&lt;path d=&quot;m15.5 15.5 5 5&quot; /&gt;
+				&lt;/svg&gt;
+				&lt;input id=&quot;mapQuery&quot; type=&quot;search&quot; placeholder=&quot;Search the map&quot; autocomplete=&quot;off&quot; aria-label=&quot;Search the map&quot; /&gt;
+				&lt;button type=&quot;button&quot; id=&quot;closeSearch&quot; aria-label=&quot;Close search&quot;&gt;×&lt;/button&gt;
+			&lt;/form&gt;
+			&lt;div class=&quot;toast&quot; id=&quot;toast&quot; role=&quot;status&quot;&gt;&lt;/div&gt;
+		&lt;/main&gt;
+
+		&lt;script&gt;
+
+	(() =&gt; {
+		const app = document.getElementById(&#x27;app&#x27;);
+		const tripView = document.getElementById(&#x27;tripView&#x27;);
+		const detailView = document.getElementById(&#x27;detailView&#x27;);
+		const tripSheet = document.getElementById(&#x27;tripSheet&#x27;);
+		const grabber = document.getElementById(&#x27;sheetGrabber&#x27;);
+		const mapStage = tripView.querySelector(&#x27;.map-stage&#x27;);
+		const toast = document.getElementById(&#x27;toast&#x27;);
+		const searchPopover = document.getElementById(&#x27;searchPopover&#x27;);
+
+		let toastTimer;
+
+		/* =====================================================
+		   DRAGGABLE SHEET STATE
+		   ===================================================== */
+
+		let collapsedTop = 300;
+		let expandedTop = 34;
+		let currentTop = 300;
+
+		let gesture = null;
+		let suppressClick = false;
+		let settleTimer = null;
+
+
+		/* =====================================================
+		   TOAST
+		   ===================================================== */
+
+		const showToast = (message) =&gt; {
+			clearTimeout(toastTimer);
+			toast.textContent = message;
+			toast.classList.add(&#x27;show&#x27;);
+			toastTimer = setTimeout(() =&gt; toast.classList.remove(&#x27;show&#x27;), 1800);
+		};
+
+
+		/* =====================================================
+		   SHEET MEASUREMENTS
+		   ===================================================== */
+
+		const measureSheet = () =&gt; {
+			/*
+				The sheet&#x27;s normal resting position is exactly
+				at the bottom edge of the map.
+			*/
+			collapsedTop = mapStage.getBoundingClientRect().height;
+
+			/*
+				How close to the top of the screen the sheet sits
+				when fully opened.
+			*/
+			expandedTop = 34;
+
+			/*
+				If it hasn&#x27;t been positioned yet, initialize it.
+			*/
+			if (!tripSheet.style.top) {
+				currentTop = collapsedTop;
+				tripSheet.style.top = `${currentTop}px`;
+			}
+		};
+
+
+		/* =====================================================
+		   MAP DIMMING BASED ON SHEET POSITION
+		   ===================================================== */
+
+		const updateSheetProgress = () =&gt; {
+			const travel = collapsedTop - expandedTop;
+
+			if (travel &lt;= 0) return;
+
+			const progress = Math.max(
+				0,
+				Math.min(
+					1,
+					(collapsedTop - currentTop) / travel
+				)
+			);
+
+			tripView.style.setProperty(
+				&#x27;--sheet-progress&#x27;,
+				progress.toFixed(4)
+			);
+		};
+
+
+		/* =====================================================
+		   PHYSICAL SHEET POSITION
+		   ===================================================== */
+
+		const positionSheet = (top, allowBottomResistance = false) =&gt; {
+			let nextTop = top;
+
+			/*
+				Don&#x27;t allow dragging above the fully-open position.
+				Extra upward travel becomes content scrolling instead.
+			*/
+			nextTop = Math.max(expandedTop, nextTop);
+
+			/*
+				Allow a little rubber-band stretch below the
+				normal collapsed position.
+			*/
+			if (nextTop &gt; collapsedTop) {
+				if (allowBottomResistance) {
+					const excess = nextTop - collapsedTop;
+
+					nextTop =
+						collapsedTop +
+						(excess * 0.20);
+				} else {
+					nextTop = collapsedTop;
+				}
+			}
+
+			currentTop = nextTop;
+			tripSheet.style.top = `${nextTop}px`;
+
+			updateSheetProgress();
+		};
+
+
+		/* =====================================================
+		   SPRING / SNAP ANIMATION
+		   ===================================================== */
+
+		const animateSheetTo = (top) =&gt; {
+			clearTimeout(settleTimer);
+
+			tripSheet.classList.remove(&#x27;is-dragging&#x27;);
+			tripSheet.classList.add(&#x27;is-settling&#x27;);
+
+			/*
+				Force browser to acknowledge the class before
+				changing position.
+			*/
+			tripSheet.getBoundingClientRect();
+
+			positionSheet(top);
+
+			settleTimer = setTimeout(() =&gt; {
+				tripSheet.classList.remove(&#x27;is-settling&#x27;);
+			}, 460);
+		};
+
+
+		/* =====================================================
+		   EXPANDED / COLLAPSED STATE
+		   ===================================================== */
+
+		const setExpanded = (expanded, updateHash = true) =&gt; {
+			tripView.classList.toggle(&#x27;expanded&#x27;, expanded);
+
+			grabber.setAttribute(
+				&#x27;aria-expanded&#x27;,
+				String(expanded)
+			);
+
+			/*
+				When closing the panel, content returns to its top.
+			*/
+			if (!expanded) {
+				tripSheet.scrollTop = 0;
+			}
+
+			animateSheetTo(
+				expanded
+					? expandedTop
+					: collapsedTop
+			);
+
+			if (
+				updateHash &amp;&amp;
+				(
+					location.hash === &#x27;&#x27; ||
+					location.hash.startsWith(&#x27;#trip&#x27;)
+				)
+			) {
+				history.replaceState(
+					null,
+					&#x27;&#x27;,
+					expanded
+						? &#x27;#trip-expanded&#x27;
+						: &#x27;#trip&#x27;
+				);
+			}
+		};
+
+
+		/* =====================================================
+		   VIEW ROUTING
+		   ===================================================== */
+
+		const showView = (name, push = false) =&gt; {
+			[tripView, detailView].forEach(view =&gt;
+				view.classList.remove(&#x27;active&#x27;)
+			);
+
+			searchPopover.classList.remove(&#x27;open&#x27;);
+
+			if (name === &#x27;detail&#x27;) {
+				detailView.classList.add(&#x27;active&#x27;);
+			} else {
+				tripView.classList.add(&#x27;active&#x27;);
+			}
+
+			if (push) {
+				history.pushState(
+					{ view: name },
+					&#x27;&#x27;,
+					&#x27;#&#x27; + name
+				);
+			}
+		};
+
+
+		const route = () =&gt; {
+			const hash = location.hash.replace(&#x27;#&#x27;, &#x27;&#x27;);
+
+			if (hash === &#x27;detail&#x27;) {
+				showView(&#x27;detail&#x27;);
+			} else {
+				showView(&#x27;trip&#x27;);
+
+				measureSheet();
+
+				const expanded =
+					hash === &#x27;trip-expanded&#x27;;
+
+				tripView.classList.toggle(
+					&#x27;expanded&#x27;,
+					expanded
+				);
+
+				grabber.setAttribute(
+					&#x27;aria-expanded&#x27;,
+					String(expanded)
+				);
+
+				currentTop =
+					expanded
+						? expandedTop
+						: collapsedTop;
+
+				tripSheet.style.top =
+					`${currentTop}px`;
+
+				if (!expanded) {
+					tripSheet.scrollTop = 0;
+				}
+
+				updateSheetProgress();
+			}
+		};
+
+
+		/* =====================================================
+		   ENTIRE WHITE PANEL DRAG
+		   ===================================================== */
+
+		const startSheetGesture = (event) =&gt; {
+			if (
+				event.pointerType === &#x27;mouse&#x27; &amp;&amp;
+				event.button !== 0
+			) {
+				return;
+			}
+
+			clearTimeout(settleTimer);
+
+			tripSheet.classList.remove(&#x27;is-settling&#x27;);
+
+			const now = performance.now();
+
+			gesture = {
+				pointerId: event.pointerId,
+
+				startY: event.clientY,
+				lastY: event.clientY,
+
+				startTop: currentTop,
+				startScrollTop: tripSheet.scrollTop,
+
+				lastTime: now,
+				velocityY: 0,
+
+				moved: false,
+				sheetMoved: false,
+				contentMoved: false
+			};
+
+			try {
+				tripSheet.setPointerCapture(event.pointerId);
+			} catch (_) {}
+		};
+
+
+		const moveSheetGesture = (event) =&gt; {
+			if (
+				!gesture ||
+				event.pointerId !== gesture.pointerId
+			) {
+				return;
+			}
+
+			const totalDeltaY =
+				event.clientY -
+				gesture.startY;
+
+			if (Math.abs(totalDeltaY) &lt; 3) {
+				return;
+			}
+
+			/*
+				We&#x27;re manually deciding whether the finger moves
+				the panel or scrolls its content.
+			*/
+			event.preventDefault();
+
+			const now = performance.now();
+
+			const elapsed =
+				Math.max(
+					1,
+					now - gesture.lastTime
+				);
+
+			const instantVelocity =
+				(event.clientY - gesture.lastY) /
+				elapsed;
+
+			gesture.velocityY =
+				(gesture.velocityY * 0.68) +
+				(instantVelocity * 0.32);
+
+			gesture.lastY = event.clientY;
+			gesture.lastTime = now;
+
+			if (Math.abs(totalDeltaY) &gt; 7) {
+				gesture.moved = true;
+				suppressClick = true;
+			}
+
+
+			/* =================================================
+			   STARTED WHILE PANEL WAS FULLY OPEN
+			   ================================================= */
+
+			if (
+				gesture.startTop &lt;=
+				expandedTop + 1
+			) {
+				/*
+					Move content opposite the finger.
+
+					Finger UP:
+					totalDeltaY negative
+					=&gt; scrollTop increases
+
+					Finger DOWN:
+					totalDeltaY positive
+					=&gt; scrollTop decreases
+				*/
+				const proposedScroll =
+					gesture.startScrollTop -
+					totalDeltaY;
+
+
+				/*
+					Content can still scroll normally.
+				*/
+				if (proposedScroll &gt;= 0) {
+					positionSheet(expandedTop);
+
+					tripSheet.scrollTop =
+						proposedScroll;
+
+					gesture.contentMoved = true;
+
+					return;
+				}
+
+
+				/*
+					Content has reached its very top.
+
+					The remaining downward finger movement now
+					pulls the ENTIRE sheet downward.
+				*/
+				tripSheet.scrollTop = 0;
+
+				const sheetPull =
+					-proposedScroll;
+
+				tripSheet.classList.add(
+					&#x27;is-dragging&#x27;
+				);
+
+				positionSheet(
+					expandedTop + sheetPull,
+					true
+				);
+
+				gesture.sheetMoved = true;
+
+				return;
+			}
+
+
+			/* =================================================
+			   STARTED WHILE PANEL WAS DOWN / PARTIALLY DOWN
+			   ================================================= */
+
+			const requestedTop =
+				gesture.startTop +
+				totalDeltaY;
+
+
+			/*
+				The sheet has reached the very top.
+
+				Any additional upward finger travel instantly
+				becomes content scrolling.
+
+				This lets one continuous swipe:
+				
+				1. raise panel
+				2. cover map
+				3. start scrolling content
+				
+				without lifting your finger.
+			*/
+			if (requestedTop &lt;= expandedTop) {
+				const extraUpwardTravel =
+					expandedTop -
+					requestedTop;
+
+				tripSheet.classList.add(
+					&#x27;is-dragging&#x27;
+				);
+
+				positionSheet(expandedTop);
+
+				tripSheet.scrollTop =
+					extraUpwardTravel;
+
+				gesture.sheetMoved = true;
+				gesture.contentMoved = true;
+
+				return;
+			}
+
+
+			/*
+				Still moving through the map area:
+				move the WHOLE white section with the finger.
+			*/
+			tripSheet.scrollTop = 0;
+
+			tripSheet.classList.add(
+				&#x27;is-dragging&#x27;
+			);
+
+			positionSheet(
+				requestedTop,
+				true
+			);
+
+			gesture.sheetMoved = true;
+		};
+
+
+		const endSheetGesture = (event) =&gt; {
+			if (!gesture) return;
+
+			if (
+				event.pointerId !== undefined &amp;&amp;
+				event.pointerId !== gesture.pointerId
+			) {
+				return;
+			}
+
+			const finished = gesture;
+
+			gesture = null;
+
+			tripSheet.classList.remove(
+				&#x27;is-dragging&#x27;
+			);
+
+
+			/*
+				If the physical sheet was pulled somewhere between
+				open and closed, decide where to spring it.
+			*/
+			if (currentTop &gt; expandedTop + 1) {
+				const midpoint =
+					expandedTop +
+					(
+						(collapsedTop - expandedTop) /
+						2
+					);
+
+				let expand;
+
+
+				/*
+					Fast flick upward.
+				*/
+				if (finished.velocityY &lt; -0.30) {
+					expand = true;
+				}
+
+				/*
+					Fast flick downward.
+				*/
+				else if (finished.velocityY &gt; 0.30) {
+					expand = false;
+				}
+
+				/*
+					Slow release:
+					go to whichever resting position is closer.
+				*/
+				else {
+					expand =
+						currentTop &lt;
+						midpoint;
+				}
+
+				setExpanded(expand);
+			}
+
+			else {
+				/*
+					It reached the top, therefore it is expanded.
+				*/
+				tripView.classList.add(
+					&#x27;expanded&#x27;
+				);
+
+				grabber.setAttribute(
+					&#x27;aria-expanded&#x27;,
+					&#x27;true&#x27;
+				);
+
+				animateSheetTo(
+					expandedTop
+				);
+
+				if (
+					location.hash === &#x27;&#x27; ||
+					location.hash.startsWith(&#x27;#trip&#x27;)
+				) {
+					history.replaceState(
+						null,
+						&#x27;&#x27;,
+						&#x27;#trip-expanded&#x27;
+					);
+				}
+			}
+
+
+			/*
+				Prevents accidental card/button activation after
+				a finger drag.
+			*/
+			if (finished.moved) {
+				setTimeout(() =&gt; {
+					suppressClick = false;
+				}, 100);
+			}
+		};
+
+
+		tripSheet.addEventListener(
+			&#x27;pointerdown&#x27;,
+			startSheetGesture
+		);
+
+		tripSheet.addEventListener(
+			&#x27;pointermove&#x27;,
+			moveSheetGesture,
+			{ passive: false }
+		);
+
+		tripSheet.addEventListener(
+			&#x27;pointerup&#x27;,
+			endSheetGesture
+		);
+
+		tripSheet.addEventListener(
+			&#x27;pointercancel&#x27;,
+			endSheetGesture
+		);
+
+
+		/*
+			If the user dragged instead of tapped, don&#x27;t accidentally
+			open &quot;Your stay&quot;, Share, etc.
+		*/
+		tripSheet.addEventListener(
+			&#x27;click&#x27;,
+			(event) =&gt; {
+				if (!suppressClick) return;
+
+				event.preventDefault();
+				event.stopPropagation();
+
+				suppressClick = false;
+			},
+			true
+		);
+
+
+		/* =====================================================
+		   GRABBER TAP
+		   ===================================================== */
+
+		grabber.addEventListener(
+			&#x27;click&#x27;,
+			() =&gt; {
+				if (suppressClick) return;
+
+				setExpanded(
+					!tripView.classList.contains(
+						&#x27;expanded&#x27;
+					)
+				);
+			}
+		);
+
+
+		/* =====================================================
+		   MAP
+		   ===================================================== */
+
+		document
+			.getElementById(&#x27;mapStay&#x27;)
+			.addEventListener(
+				&#x27;click&#x27;,
+				() =&gt; setExpanded(true)
+			);
+
+
+		document
+			.getElementById(&#x27;mapSearch&#x27;)
+			.addEventListener(
+				&#x27;click&#x27;,
+				() =&gt; {
+					searchPopover.classList.add(
+						&#x27;open&#x27;
+					);
+
+					document
+						.getElementById(&#x27;mapQuery&#x27;)
+						.focus();
+				}
+			);
+
+
+		document
+			.getElementById(&#x27;closeSearch&#x27;)
+			.addEventListener(
+				&#x27;click&#x27;,
+				() =&gt;
+					searchPopover.classList.remove(
+						&#x27;open&#x27;
+					)
+			);
+
+
+		searchPopover.addEventListener(
+			&#x27;submit&#x27;,
+			(event) =&gt; {
+				event.preventDefault();
+
+				const query =
+					document
+						.getElementById(&#x27;mapQuery&#x27;)
+						.value
+						.trim();
+
+				searchPopover.classList.remove(
+					&#x27;open&#x27;
+				);
+
+				showToast(
+					query
+						? `Searching Houston for “${query}”`
+						: &#x27;Enter a place to search&#x27;
+				);
+			}
+		);
+
+
+		/* =====================================================
+		   STAY DETAILS
+		   ===================================================== */
+
+		const openDetail = () =&gt;
+			showView(&#x27;detail&#x27;, true);
+
+
+		document
+			.getElementById(&#x27;stayCard&#x27;)
+			.addEventListener(
+				&#x27;click&#x27;,
+				(event) =&gt; {
+					if (
+						!event.target.closest(
+							&#x27;#shareListing&#x27;
+						)
+					) {
+						openDetail();
+					}
+				}
+			);
+
+
+		document
+			.getElementById(&#x27;stayCard&#x27;)
+			.addEventListener(
+				&#x27;keydown&#x27;,
+				(event) =&gt; {
+					if (
+						(
+							event.key === &#x27;Enter&#x27; ||
+							event.key === &#x27; &#x27;
+						) &amp;&amp;
+						!event.target.closest(
+							&#x27;#shareListing&#x27;
+						)
+					) {
+						event.preventDefault();
+						openDetail();
+					}
+				}
+			);
+
+
+		/* =====================================================
+		   SHARE
+		   ===================================================== */
+
+		document
+			.getElementById(&#x27;shareListing&#x27;)
+			.addEventListener(
+				&#x27;click&#x27;,
+				async (event) =&gt; {
+					event.stopPropagation();
+
+					const shareData = {
+						title: &#x27;Home in Houston&#x27;,
+						text: &#x27;Montrose Blissful Studio hosted by Phillip&#x27;,
+						url:
+							location.href.split(&#x27;#&#x27;)[0] +
+							&#x27;#detail&#x27;
+					};
+
+					try {
+						if (navigator.share) {
+							await navigator.share(
+								shareData
+							);
+						} else {
+							await navigator.clipboard
+								?.writeText(
+									shareData.url
+								);
+
+							showToast(
+								&#x27;Listing link copied&#x27;
+							);
+						}
+					} catch (_) {
+						/* share was dismissed */
+					}
+				}
+			);
+
+
+		/* =====================================================
+		   BACK
+		   ===================================================== */
+
+		document
+			.querySelectorAll(&#x27;[data-back]&#x27;)
+			.forEach(button =&gt;
+				button.addEventListener(
+					&#x27;click&#x27;,
+					() =&gt; {
+						history.pushState(
+							{ view: &#x27;trip&#x27; },
+							&#x27;&#x27;,
+							&#x27;#trip&#x27;
+						);
+
+						showView(&#x27;trip&#x27;);
+
+						measureSheet();
+
+						tripView.classList.remove(
+							&#x27;expanded&#x27;
+						);
+
+						tripSheet.scrollTop = 0;
+
+						animateSheetTo(
+							collapsedTop
+						);
+					}
+				)
+			);
+
+
+		document
+			.getElementById(&#x27;mainBack&#x27;)
+			.addEventListener(
+				&#x27;click&#x27;,
+				() =&gt; { window.location.href = &#x27;./index.html#trips&#x27;; }
+			);
+
+
+		/* =====================================================
+		   BOTTOM NAV
+		   ===================================================== */
+
+		document
+			.querySelectorAll(&#x27;.tab&#x27;)
+			.forEach(item =&gt;
+				item.addEventListener(
+					&#x27;click&#x27;,
+					() =&gt; {
+						const destination = item.dataset.go;
+						if (destination === &#x27;trips&#x27;) {
+							showView(&#x27;trip&#x27;);
+							setExpanded(false);
+							if (location.hash !== &#x27;#trip&#x27;) history.replaceState({ view: &#x27;trip&#x27; }, &#x27;&#x27;, &#x27;#trip&#x27;);
+						} else {
+							window.location.href = `./index.html#${destination}`;
+						}
+					}
+				)
+			);
+
+
+		/* =====================================================
+		   DETAIL PAGE
+		   ===================================================== */
+
+		// Scrolls smoothly directly to the newly integrated section instead of opening a new page
+		document
+			.getElementById(&#x27;directionsButton&#x27;)
+			.addEventListener(
+				&#x27;click&#x27;,
+				() =&gt; {
+					document
+						.getElementById(
+							&#x27;gettingThereDetail&#x27;
+						)
+						.scrollIntoView({
+							behavior: &#x27;smooth&#x27;,
+							block: &#x27;start&#x27;
+						});
+				}
+			);
+
+
+		document
+			.getElementById(&#x27;messageHost&#x27;)
+			.addEventListener(
+				&#x27;click&#x27;,
+				() =&gt;
+					showToast(
+						&#x27;Opening your conversation with Phillip&#x27;
+					)
+			);
+
+
+		document
+			.getElementById(&#x27;yourPlace&#x27;)
+			.addEventListener(
+				&#x27;click&#x27;,
+				() =&gt;
+					showToast(
+						&#x27;Montrose Blissful Studio&#x27;
+					)
+			);
+
+
+		/* =====================================================
+		   PDF
+		   ===================================================== */
+
+		const downloadPDF = () =&gt; {
+			const content =
+				&#x27;%PDF-1.1\n1 0 obj&lt;&lt;/Type/Catalog/Pages 2 0 R&gt;&gt;endobj\n2 0 obj&lt;&lt;/Type/Pages/Count 0&gt;&gt;endobj\ntrailer&lt;&lt;/Root 1 0 R&gt;&gt;\n%%EOF&#x27;;
+
+			const blob = new Blob(
+				[content],
+				{ type: &#x27;application/pdf&#x27; }
+			);
+
+			const url =
+				URL.createObjectURL(blob);
+
+			const link =
+				document.createElement(&#x27;a&#x27;);
+
+			link.href = url;
+
+			link.download =
+				&#x27;Houston-reservation-HMQKT2TACB.pdf&#x27;;
+
+			link.click();
+
+			setTimeout(
+				() =&gt; URL.revokeObjectURL(url),
+				1000
+			);
+
+			showToast(
+				&#x27;Reservation PDF downloaded&#x27;
+			);
+		};
+
+		window.downloadPDF = downloadPDF;
+
+
+		/* =====================================================
+		   POLICY
+		   ===================================================== */
+
+		const togglePolicy = (id) =&gt; {
+			const block =
+				document.getElementById(id);
+
+			const btn =
+				block.querySelector(&#x27;.read-more&#x27;);
+
+			const open =
+				block.classList.toggle(&#x27;open&#x27;);
+
+			btn.textContent =
+				open
+					? &#x27;Show less&#x27;
+					: &#x27;Read more&#x27;;
+		};
+
+		window.togglePolicy = togglePolicy;
+		window.showToast = showToast;
+
+
+		/* =====================================================
+		   RESIZE / ROTATION
+		   ===================================================== */
+
+		const resizeSheet = () =&gt; {
+			const expanded =
+				tripView.classList.contains(
+					&#x27;expanded&#x27;
+				);
+
+			measureSheet();
+
+			currentTop =
+				expanded
+					? expandedTop
+					: collapsedTop;
+
+			tripSheet.style.top =
+				`${currentTop}px`;
+
+			updateSheetProgress();
+		};
+
+		window.addEventListener(
+			&#x27;resize&#x27;,
+			resizeSheet
+		);
+
+		window.addEventListener(
+			&#x27;orientationchange&#x27;,
+			() =&gt; {
+				setTimeout(
+					resizeSheet,
+					100
+				);
+			}
+		);
+
+
+		/* =====================================================
+		   ROUTING / STARTUP
+		   ===================================================== */
+
+		window.addEventListener(
+			&#x27;popstate&#x27;,
+			route
+		);
+
+		measureSheet();
+		route();
+	})();
+&lt;/script&gt;
+	
+&lt;style id=&quot;embedded-trip-parent-nav-patch&quot;&gt;
+  .tabbar{display:none !important;}
+  .screen{bottom:0 !important;}
+&lt;/style&gt;
+&lt;script&gt;
+  document.addEventListener(&#x27;DOMContentLoaded&#x27;, function(){
+    var back = document.getElementById(&#x27;mainBack&#x27;);
+    if (back) {
+      back.addEventListener(&#x27;click&#x27;, function(event){
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        if (window.parent &amp;&amp; window.parent !== window) {
+          window.parent.postMessage({type:&#x27;trip-detail-back&#x27;}, &#x27;*&#x27;);
+        }
+      }, true);
+    }
+  });
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+			</section>
+
 			<nav class="tabbar" aria-label="Primary navigation"><button class="tab on" data-go="explore"><span class="ti"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
 							<circle cx="13.5" cy="13.5" r="10.5" />
 							<path d="m21 21 9 9" />
@@ -2035,49 +4453,73 @@
 				const target = document.getElementById(id);
 				if (!target?.classList.contains('screen')) return;
 				const current = document.querySelector('.screen.active');
-				if (current)
-				{
+				if (current) {
 					const scroll = current.querySelector('.page-scroll');
-					positions.set(current.id, scroll.scrollTop);
+					if (scroll) positions.set(current.id, scroll.scrollTop);
 				}
 				screens.forEach(screen => screen.classList.toggle('active', screen === target));
-				tabs.forEach(tab =>
-				{
-					const on = tab.dataset.go === id;
-					tab.classList.toggle('on', on);
-					if (on) tab.setAttribute('aria-current', 'page');
-					else tab.removeAttribute('aria-current')
-				});
-				target.querySelector('.page-scroll').scrollTop = positions.get(id) || 0;
+				const activeTab = id === 'tripdetail' ? 'trips' : id;
+				tabs.forEach(tab => { const on = tab.dataset.go === activeTab;
+					tab.classList.toggle('on', on); if (on) tab.setAttribute('aria-current', 'page');
+					else tab.removeAttribute('aria-current') });
+				const targetScroll = target.querySelector('.page-scroll');
+				if (targetScroll) targetScroll.scrollTop = positions.get(id) || 0;
 			}
-			tabs.forEach(tab => tab.addEventListener('click', () => showScreen(tab.dataset.go)));
-			tabs[0].setAttribute('aria-current', 'page');
+			function routeFromHash()
+			{
+				const id = location.hash.replace(/^#/, '');
+				if (screens.some(screen => screen.id === id)) showScreen(id);
+				else showScreen('explore');
+			}
+
+			tabs.forEach(tab => tab.addEventListener('click', () =>
+			{
+				const id = tab.dataset.go;
+				showScreen(id);
+				history.replaceState(null, '', `#${id}`);
+			}));
+
+			document.querySelectorAll('.trip-card[data-href]').forEach(card =>
+			{
+				const open = () => { location.href = card.dataset.href; };
+				card.addEventListener('click', open);
+				card.addEventListener('keydown', event =>
+				{
+					if (event.key === 'Enter' || event.key === ' ')
+					{
+						event.preventDefault();
+						open();
+					}
+				});
+			});
+
+			window.addEventListener('hashchange', routeFromHash);
+			window.addEventListener('message', event =>
+			{
+				if (event.data && event.data.type === 'trip-detail-back')
+				{
+					showScreen('trips');
+					history.replaceState(null, '', '#trips');
+				}
+			});
+			routeFromHash();
 			const profile = document.querySelector('.profile-scroll');
 			profile.addEventListener('scroll', () => profile.classList.toggle('is-scrolled', profile.scrollTop > 60), { passive: true });
 			document.querySelectorAll('.favorite').forEach(button =>
 			{
-				button.addEventListener('click', () =>
-				{
-					const saved = button.getAttribute('aria-pressed') !== 'true';
+				button.addEventListener('click', () => { const saved = button.getAttribute('aria-pressed') !== 'true';
 					button.setAttribute('aria-pressed', String(saved));
-					button.setAttribute('aria-label', saved ? 'Unsave home' : 'Save home')
-				});
+					button.setAttribute('aria-label', saved ? 'Unsave home' : 'Save home') });
 			});
 			document.querySelectorAll('.msg-tabs .pill').forEach(button =>
 			{
 				button.addEventListener('click', () =>
 				{
-					button.parentElement.querySelectorAll('.pill').forEach(other =>
-					{
-						other.classList.toggle('on', other === button);
-						other.setAttribute('aria-pressed', String(other === button))
-					});
+					button.parentElement.querySelectorAll('.pill').forEach(other => { other.classList.toggle('on', other === button);
+						other.setAttribute('aria-pressed', String(other === button)) });
 					const filter = button.textContent.trim();
-					document.querySelectorAll('#messages .thread').forEach(thread =>
-					{
-						const support = !!thread.querySelector('.abnb-av');
-						thread.hidden = filter === 'Support' ? !support : filter === 'Traveling' ? support : false
-					});
+					document.querySelectorAll('#messages .thread').forEach(thread => { const support = !!thread.querySelector('.abnb-av');
+						thread.hidden = filter === 'Support' ? !support : filter === 'Traveling' ? support : false });
 				});
 			});
 			document.querySelectorAll('.arrow-btn').forEach(button =>
@@ -2085,20 +4527,11 @@
 				button.setAttribute('role', 'button');
 				button.tabIndex = 0;
 				button.setAttribute('aria-label', 'Scroll homes');
-				const scroll = () =>
-				{
-					const list = button.closest('.sec-head').nextElementSibling;
-					list.scrollBy({ left: list.clientWidth * .8, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
-				};
+				const scroll = () => { const list = button.closest('.sec-head').nextElementSibling;
+					list.scrollBy({ left: list.clientWidth * .8, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }) };
 				button.addEventListener('click', scroll);
-				button.addEventListener('keydown', event =>
-				{
-					if (event.key === 'Enter' || event.key === ' ')
-					{
-						event.preventDefault();
-						scroll()
-					}
-				});
+				button.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault();
+						scroll() } });
 			});
 			document.querySelector('#profile .mini')?.addEventListener('click', () => showScreen('trips'));
 			document.querySelector('.view-more').addEventListener('click', () => announce('All past trips are shown'));
@@ -2108,17 +4541,6 @@
 			{
 				if (!button.getAttribute('aria-label')) button.setAttribute('aria-label', button === document.querySelector('.msg-head .icon-btn') ? 'Search messages' : 'Settings');
 			});
-
-
-			// Allow external pages such as test.html to return directly to a specific tab.
-			const primaryScreenIds = new Set(['explore', 'wishlists', 'trips', 'messages', 'profile']);
-			const routePrimaryHash = () =>
-			{
-				const id = location.hash.slice(1).toLowerCase();
-				if (primaryScreenIds.has(id)) showScreen(id);
-			};
-			window.addEventListener('hashchange', routePrimaryHash);
-			routePrimaryHash();
 
 			// Relative URLs support both username.github.io/ and username.github.io/repository/.
 			// This requires HTTPS (GitHub Pages provides it) or localhost, not a file:// preview.

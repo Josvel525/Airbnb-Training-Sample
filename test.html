@@ -1,0 +1,2508 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=0" />
+		<title>Houston trip</title>
+		<meta name="theme-color" content="#ffffff">
+		<meta name="color-scheme" content="light">
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-title" content="Airbnb UI">
+		<meta name="apple-mobile-web-app-status-bar-style" content="default">
+		<link rel="manifest" href="./manifest.webmanifest">
+		<link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+		<link rel="icon" href="./icons/icon-192.png" type="image/png" sizes="192x192">
+		<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" sizes="180x180">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..800&display=swap" rel="stylesheet">
+		<style>
+			:root {
+				--ink: #222222;
+				--muted: #717171;
+				--line: #e8e8e8;
+				--soft: #f5f5f5;
+				--soft-2: #f1f1f1;
+				--accent: #e51d55;
+				--app-width: 430px;
+			}
+
+			* {
+				box-sizing: border-box;
+				-webkit-tap-highlight-color: transparent;
+			}
+
+			/* SCROLL LOCK: Completely locks the viewport from rubber-banding / pull-to-refresh */
+			html,
+			body {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100svh;
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+				overscroll-behavior: none;
+				touch-action: none;
+				color: var(--ink);
+				background: #000;
+				font-family: Inter, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+				-webkit-font-smoothing: antialiased;
+				text-rendering: geometricPrecision;
+			}
+
+			button,
+			input {
+				font: inherit;
+			}
+
+			button {
+				color: inherit;
+			}
+
+			svg {
+				display: block;
+			}
+
+			.app-shell {
+				position: relative;
+				width: min(100vw, var(--app-width));
+				height: 100svh;
+				margin: 0 auto;
+				overflow: hidden;
+				background: #fff;
+				box-shadow: 0 0 26px rgba(0, 0, 0, .08);
+				isolation: isolate;
+			}
+
+			/* SCROLLABLE MIDDLE: Restores vertical scroll inside screen containers */
+			.screen {
+				position: absolute;
+				inset: 0;
+				display: none;
+				overflow-y: auto;
+				overflow-x: hidden;
+				background: #fff;
+				scrollbar-width: none;
+				-ms-overflow-style: none;
+				overscroll-behavior-y: contain;
+				touch-action: pan-y;
+				-webkit-overflow-scrolling: touch;
+			}
+
+			.screen::-webkit-scrollbar,
+			.trip-sheet::-webkit-scrollbar {
+				display: none;
+			}
+
+			.screen.active {
+				display: block;
+			}
+
+			/* Main trips/map view */
+			.main-screen {
+				overflow: hidden;
+				background: #fff;
+			}
+
+			.map-stage {
+				position: absolute;
+				inset: 0 0 auto;
+				height: 300px;
+				overflow: hidden;
+				background: #ecebe7;
+			}
+
+			.map-stage::after {
+				content: "";
+				position: absolute;
+				inset: 0;
+				pointer-events: none;
+				background: rgba(0, 0, 0, 0);
+				transition: background .25s ease;
+			}
+
+			.map-stage img {
+				width: 100%;
+				height: 100%;
+				display: block;
+				object-fit: fill;
+				transition: filter .25s ease;
+			}
+
+			.map-hotspot {
+				position: absolute;
+				z-index: 2;
+				border: 0;
+				padding: 0;
+				background: transparent;
+				cursor: pointer;
+			}
+
+			.search-hotspot {
+				left: 32.5%;
+				top: 13%;
+				width: 35.5%;
+				height: 15.5%;
+				border-radius: 28px;
+			}
+
+			.stay-hotspot {
+				left: 42%;
+				top: 45%;
+				width: 18%;
+				height: 29%;
+				border-radius: 30px;
+			}
+
+			.trip-sheet {
+				position: absolute;
+				z-index: 5;
+				top: 300px;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				overflow-y: auto;
+				overscroll-behavior-y: contain;
+				touch-action: pan-y;
+				-webkit-overflow-scrolling: touch;
+				border-radius: 23px 23px 0 0;
+				background: #fff;
+				box-shadow: 0 -1px 3px rgba(0, 0, 0, .04);
+				transition: top .28s cubic-bezier(.2, .75, .25, 1);
+				scrollbar-width: none;
+			}
+
+			.main-screen.expanded .trip-sheet {
+				top: 34px;
+			}
+
+			.main-screen.expanded .map-stage::after {
+				background: rgba(0, 0, 0, .28);
+			}
+
+			.main-screen.expanded .map-stage img {
+				filter: brightness(.88);
+			}
+
+			.sheet-inner {
+				position: relative;
+				min-height: 650px;
+				padding-bottom: 115px;
+			}
+
+			.sheet-grabber {
+				position: absolute;
+				z-index: 3;
+				top: 6px;
+				left: 50%;
+				width: 28px;
+				height: 4px;
+				padding: 0;
+				border: 0;
+				border-radius: 99px;
+				background: #8a8a8a;
+				transform: translateX(-50%);
+				cursor: ns-resize;
+				touch-action: none;
+			}
+
+			.sheet-header {
+				position: relative;
+				height: 79px;
+			}
+
+			.sheet-header h1 {
+				position: absolute;
+				top: 27px;
+				left: 70px;
+				right: 70px;
+				margin: 0;
+				text-align: center;
+				font-size: 26px;
+				font-weight: 700;
+				line-height: 34px;
+				letter-spacing: -.8px;
+			}
+
+			.circle-back {
+				display: grid;
+				place-items: center;
+				width: 40px;
+				height: 40px;
+				padding: 0;
+				border: 0;
+				border-radius: 50%;
+				background: #f4f4f4;
+				cursor: pointer;
+			}
+
+			.sheet-back {
+				position: absolute;
+				top: 20px;
+				left: 18px;
+			}
+
+			.circle-back svg {
+				width: 20px;
+				height: 20px;
+				stroke-width: 2.15;
+			}
+
+			.stay-card {
+				height: 179px;
+				margin: 0 24px;
+				padding: 8px;
+				overflow: hidden;
+				border: 1px solid #f0f0f0;
+				border-radius: 21px;
+				background: #fff;
+				box-shadow: 0 8px 24px rgba(0, 0, 0, .10);
+				cursor: pointer;
+			}
+
+			.stay-overview {
+				display: flex;
+				height: 106px;
+			}
+
+			.stay-thumb {
+				flex: 0 0 106px;
+				width: 106px;
+				height: 106px;
+				object-fit: cover;
+				object-position: center;
+				border-radius: 12px;
+				background: #ddd;
+			}
+
+			.stay-copy {
+				min-width: 0;
+				padding: 20px 0 0 12px;
+			}
+
+			.stay-copy h2 {
+				margin: 0;
+				font-size: 18px;
+				font-weight: 700;
+				line-height: 22px;
+				letter-spacing: -.35px;
+			}
+
+			.stay-copy .host {
+				margin: 2px 0 0;
+				color: var(--muted);
+				font-size: 14px;
+				line-height: 20px;
+			}
+
+			.stay-copy .range {
+				margin: 13px 0 0;
+				color: var(--muted);
+				font-size: 13px;
+				line-height: 18px;
+			}
+
+			.stay-divider {
+				height: 1px;
+				margin-top: 8px;
+				background: var(--line);
+			}
+
+			.share-listing {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 10px;
+				width: 100%;
+				height: 40px;
+				margin-top: 8px;
+				padding: 0;
+				border: 0;
+				border-radius: 14px;
+				background: #f4f4f4;
+				font-size: 14px;
+				font-weight: 600;
+				cursor: pointer;
+			}
+
+			.share-listing svg {
+				width: 20px;
+				height: 20px;
+			}
+
+			.timeline {
+				position: relative;
+				height: 172px;
+				margin-top: 12px;
+			}
+
+			.event-card {
+				position: absolute;
+				right: 24px;
+				left: 66px;
+				display: flex;
+				align-items: center;
+				height: 80px;
+				border-radius: 21px;
+				background: #f5f5f5;
+			}
+
+			.event-card.first {
+				top: 0;
+			}
+
+			.event-card.second {
+				top: 92px;
+			}
+
+			.door-tile {
+				display: grid;
+				flex: 0 0 64px;
+				place-items: center;
+				width: 64px;
+				height: 64px;
+				margin-left: 8px;
+				overflow: hidden;
+				border-radius: 17px;
+				background: #eeeeee;
+			}
+
+			.door-tile img {
+				display: block;
+				width: 44px;
+				height: 55px;
+				object-fit: contain;
+			}
+
+			.door-tile img.closed {
+				width: 42px;
+				height: 53px;
+			}
+
+			.event-copy {
+				min-width: 0;
+				margin-left: 12px;
+			}
+
+			.event-copy h3 {
+				margin: 0;
+				font-size: 16px;
+				font-weight: 700;
+				line-height: 21px;
+				letter-spacing: -.2px;
+			}
+
+			.event-copy p {
+				margin: 2px 0 0;
+				color: var(--muted);
+				font-size: 13px;
+				line-height: 18px;
+				white-space: nowrap;
+			}
+
+			.date-node {
+				position: absolute;
+				left: 23px;
+				width: 38px;
+				text-align: center;
+			}
+
+			.date-node.first {
+				top: 15px;
+			}
+
+			.date-node.second {
+				top: 107px;
+			}
+
+			.date-node b {
+				display: block;
+				font-size: 11px;
+				font-weight: 700;
+				line-height: 15px;
+			}
+
+			.date-node span {
+				display: grid;
+				place-items: center;
+				width: 30px;
+				height: 30px;
+				margin: 4px auto 0;
+				border-radius: 50%;
+				color: #696969;
+				background: #eeeeee;
+				font-size: 13px;
+				font-weight: 700;
+			}
+
+			.date-line {
+				position: absolute;
+				top: 64px;
+				left: 38px;
+				width: 1px;
+				height: 43px;
+				background: #e3e3e3;
+			}
+
+			.houston-stamp {
+				display: block;
+				width: 180px;
+				height: 120px;
+				margin: 28px auto 0;
+				object-fit: contain;
+			}
+
+			.bottom-nav {
+				position: absolute;
+				z-index: 20;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				display: grid;
+				grid-template-columns: repeat(5, 1fr);
+				height: 100px;
+				padding: 9px 6px max(13px, env(safe-area-inset-bottom));
+				border-top: 1px solid #e7e7e7;
+				background: rgba(255, 255, 255, .985);
+			}
+
+			.nav-item {
+				position: relative;
+				display: flex;
+				align-items: center;
+				flex-direction: column;
+				gap: 3px;
+				min-width: 0;
+				padding: 0;
+				border: 0;
+				background: transparent;
+				color: #6b6b6b;
+				font-size: 13px;
+				line-height: 18px;
+				cursor: pointer;
+			}
+
+			.nav-icon-wrap {
+				position: relative;
+				display: grid;
+				place-items: center;
+				width: 34px;
+				height: 32px;
+			}
+
+			.nav-icon {
+				width: 27px;
+				height: 27px;
+				fill: none;
+				stroke: currentColor;
+				stroke-width: 1.7;
+			}
+
+			.nav-icon.search {
+				width: 28px;
+				height: 28px;
+			}
+
+			.nav-icon.heart {
+				width: 29px;
+				height: 27px;
+			}
+
+			.nav-icon.message {
+				width: 28px;
+				height: 27px;
+			}
+
+			.nav-item.active {
+				color: var(--accent);
+				font-weight: 600;
+			}
+
+			.airbnb-mark {
+				width: 31px;
+				height: 31px;
+				fill: none;
+				stroke: currentColor;
+				stroke-width: 2.25;
+				stroke-linecap: round;
+				stroke-linejoin: round;
+			}
+
+			.nav-dot {
+				position: absolute;
+				top: 0;
+				right: 0;
+				width: 6px;
+				height: 6px;
+				border: 1px solid #fff;
+				border-radius: 50%;
+				background: var(--accent);
+			}
+
+			.profile-avatar {
+				width: 25px;
+				height: 25px;
+				border-radius: 50%;
+				object-fit: cover;
+			}
+
+			/* Trip detail */
+			.detail-screen {
+				padding-bottom: 55px;
+			}
+
+			.detail-topbar {
+				position: relative;
+				height: 93px;
+			}
+
+			.detail-back {
+				position: absolute;
+				top: 30px;
+				left: 17px;
+				width: 39px;
+				height: 39px;
+			}
+
+			.detail-back svg {
+				width: 19px;
+				height: 19px;
+			}
+
+			.detail-main {
+				padding: 0 24px;
+			}
+
+			.listing-hero {
+				position: relative;
+				width: 100%;
+				overflow: hidden;
+				border-radius: 12px;
+				aspect-ratio: 3 / 2;
+				background: #eee;
+			}
+
+			.listing-hero img {
+				display: block;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+
+			.listing-heading h1 {
+				margin: 17px 0 0;
+				font-size: 22px;
+				font-weight: 700;
+				line-height: 29px;
+				letter-spacing: -.65px;
+			}
+
+			.listing-heading p {
+				margin: 1px 0 0;
+				color: var(--muted);
+				font-size: 16px;
+				line-height: 24px;
+			}
+
+			.dates-card {
+				position: relative;
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				height: 109px;
+				margin-top: 18px;
+				border-radius: 17px;
+				background: #f7f7f7;
+			}
+
+			.dates-card::after {
+				content: "";
+				position: absolute;
+				top: 20px;
+				bottom: 20px;
+				left: 50%;
+				width: 1px;
+				background: #d4d4d4;
+			}
+
+			.date-col {
+				padding-top: 19px;
+			}
+
+			.date-col:first-child {
+				padding-left: 24px;
+				text-align: left;
+			}
+
+			.date-col:last-child {
+				padding-right: 24px;
+				text-align: right;
+			}
+
+			.date-col h2 {
+				margin: 0;
+				font-size: 16px;
+				font-weight: 700;
+				line-height: 22px;
+				letter-spacing: -.25px;
+			}
+
+			.date-col .day {
+				margin: 9px 0 0;
+				font-size: 16px;
+				line-height: 20px;
+			}
+
+			.date-col .time {
+				margin: 4px 0 0;
+				color: var(--muted);
+				font-size: 14px;
+				line-height: 18px;
+			}
+
+			.trip-info {
+				margin-top: 39px;
+			}
+
+			.info-row {
+				display: grid;
+				grid-template-columns: 40px minmax(0, 1fr);
+				min-height: 52px;
+				margin: 0 0 24px;
+				padding: 0;
+				border: 0;
+				background: transparent;
+				text-align: left;
+				cursor: pointer;
+			}
+
+			.info-row .info-icon {
+				width: 27px;
+				height: 27px;
+				margin-top: 1px;
+				fill: none;
+				stroke: #202020;
+				stroke-width: 1.75;
+				stroke-linecap: round;
+				stroke-linejoin: round;
+			}
+
+			.info-copy h2 {
+				margin: 0;
+				font-size: 17px;
+				font-weight: 600;
+				line-height: 23px;
+				letter-spacing: -.3px;
+			}
+
+			.info-copy p {
+				max-width: 100%;
+				margin: 3px 0 0;
+				overflow: hidden;
+				color: var(--muted);
+				font-size: 15.5px;
+				line-height: 21px;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+
+			.detail-divider {
+				height: 1px;
+				margin-top: 1px;
+				background: var(--line);
+			}
+
+			/* Reservation blocks integrated to flow smoothly */
+			.res-block h2 {
+				margin: 0;
+				font-size: 17px;
+				font-weight: 700;
+				line-height: 24px;
+				letter-spacing: -.35px;
+			}
+
+			.res-block p {
+				margin: 0;
+				font-size: 16px;
+				line-height: 24px;
+			}
+
+			.who-block {
+				margin-top: 31px;
+			}
+
+			.who-block p {
+				margin-top: 5px;
+			}
+
+			.code-block {
+				margin-top: 39px;
+			}
+
+			.code-block p {
+				margin-top: 10px;
+				letter-spacing: -.2px;
+			}
+
+			.policy-block {
+				margin-top: 37px;
+			}
+
+			.policy-copy {
+				margin-top: 11px !important;
+			}
+
+			.read-more {
+				margin-top: 5px;
+				padding: 0;
+				border: 0;
+				border-bottom: 1px solid currentColor;
+				background: transparent;
+				font-size: 16px;
+				font-weight: 600;
+				line-height: 22px;
+				cursor: pointer;
+			}
+
+			.policy-extra {
+				display: none;
+				margin-top: 8px !important;
+				color: var(--muted);
+				font-size: 14px !important;
+				line-height: 20px !important;
+			}
+
+			.policy-block.open .policy-extra {
+				display: block;
+			}
+
+			.pdf-row {
+				display: grid;
+				grid-template-columns: 32px minmax(0, 1fr) 20px;
+				align-items: center;
+				width: 100%;
+				height: 52px;
+				margin-top: 21px;
+				padding: 0;
+				border: 0;
+				background: transparent;
+				text-align: left;
+				cursor: pointer;
+			}
+
+			.pdf-row .globe {
+				width: 20px;
+				height: 20px;
+				fill: none;
+				stroke: #222;
+				stroke-width: 1.8;
+			}
+
+			.pdf-row span {
+				font-size: 16px;
+				line-height: 22px;
+				white-space: nowrap;
+			}
+
+			.pdf-row .chevron {
+				width: 17px;
+				height: 17px;
+				justify-self: end;
+				fill: none;
+				stroke: #8a8a8a;
+				stroke-width: 2.2;
+			}
+
+			.reservation-divider {
+				height: 1px;
+				margin-top: 23px;
+				background: var(--line);
+			}
+
+			.getting-section h2 {
+				margin: 35px 0 0;
+				font-size: 22px;
+				font-weight: 700;
+				line-height: 31px;
+				letter-spacing: -.55px;
+			}
+
+			.getting-map-link {
+				display: block;
+				margin-top: 29px;
+				border-radius: 9px;
+				overflow: hidden;
+			}
+
+			.getting-map-link img {
+				display: block;
+				width: 100%;
+				aspect-ratio: 3 / 2;
+				object-fit: cover;
+			}
+
+			.additional-details {
+				margin-top: 38px;
+				padding-bottom: 18px;
+			}
+
+			.additional-details h2 {
+				margin: 0 0 19px;
+				font-size: 22px;
+				font-weight: 700;
+				line-height: 31px;
+				letter-spacing: -.55px;
+			}
+
+			.detail-list {
+				border-top: 1px solid var(--line);
+			}
+
+			.detail-list button {
+				display: grid;
+				grid-template-columns: 32px minmax(0, 1fr) 18px;
+				align-items: center;
+				width: 100%;
+				min-height: 63px;
+				padding: 12px 0;
+				border: 0;
+				border-bottom: 1px solid var(--line);
+				background: transparent;
+				color: var(--ink);
+				text-align: left;
+				cursor: pointer;
+			}
+
+			.detail-list svg {
+				width: 21px;
+				height: 21px;
+				fill: none;
+				stroke: currentColor;
+				stroke-width: 1.7;
+				stroke-linecap: round;
+				stroke-linejoin: round;
+			}
+
+			.detail-list strong {
+				display: block;
+				font-size: 16px;
+				font-weight: 600;
+				line-height: 21px;
+			}
+
+			.detail-list small {
+				display: block;
+				margin-top: 2px;
+				color: var(--muted);
+				font-size: 13px;
+				line-height: 18px;
+			}
+
+			.detail-list .row-chevron {
+				width: 16px;
+				height: 16px;
+				justify-self: end;
+				color: #8a8a8a;
+				stroke-width: 2.2;
+			}
+
+			/* Lightweight interactive feedback */
+			.toast {
+				position: absolute;
+				z-index: 100;
+				bottom: 116px;
+				left: 50%;
+				max-width: calc(100% - 48px);
+				padding: 10px 15px;
+				border-radius: 22px;
+				color: #fff;
+				background: rgba(34, 34, 34, .94);
+				box-shadow: 0 4px 18px rgba(0, 0, 0, .18);
+				font-size: 13px;
+				line-height: 18px;
+				text-align: center;
+				white-space: nowrap;
+				opacity: 0;
+				pointer-events: none;
+				transform: translate(-50%, 10px);
+				transition: opacity .2s ease, transform .2s ease;
+			}
+
+			.toast.show {
+				opacity: 1;
+				transform: translate(-50%, 0);
+			}
+
+			.search-popover {
+				position: absolute;
+				z-index: 80;
+				top: 34px;
+				right: 20px;
+				left: 20px;
+				display: none;
+				gap: 9px;
+				align-items: center;
+				padding: 10px 12px;
+				border-radius: 18px;
+				background: #fff;
+				box-shadow: 0 7px 30px rgba(0, 0, 0, .2);
+			}
+
+			.search-popover.open {
+				display: flex;
+			}
+
+			.search-popover svg {
+				flex: 0 0 20px;
+				width: 20px;
+				height: 20px;
+				fill: none;
+				stroke: #222;
+				stroke-width: 2;
+			}
+
+			.search-popover input {
+				min-width: 0;
+				flex: 1;
+				height: 34px;
+				border: 0;
+				outline: 0;
+				font-size: 15px;
+			}
+
+			.search-popover button {
+				width: 31px;
+				height: 31px;
+				border: 0;
+				border-radius: 50%;
+				background: #f1f1f1;
+				cursor: pointer;
+			}
+
+			@media (max-width: 430px) {
+				.map-stage {
+					height: 69.767vw;
+				}
+
+				.trip-sheet {
+					top: 69.767vw;
+				}
+			}
+
+			@media (max-width: 360px) {
+				.stay-card {
+					margin-right: 18px;
+					margin-left: 18px;
+				}
+
+				.event-card {
+					right: 18px;
+				}
+
+				.stay-thumb {
+					flex-basis: 96px;
+					width: 96px;
+				}
+
+				.stay-copy {
+					padding-left: 10px;
+				}
+
+				.event-copy {
+					margin-left: 9px;
+				}
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+
+				*,
+				*::before,
+				*::after {
+					scroll-behavior: auto !important;
+					transition: none !important;
+				}
+			}
+			/* =========================================================
+   DRAGGABLE TRIP SHEET — NATIVE APP STYLE
+   ========================================================= */
+
+.trip-sheet {
+	touch-action: none !important;
+	will-change: top;
+}
+
+.trip-sheet.is-dragging {
+	transition: none !important;
+	cursor: grabbing;
+}
+
+.trip-sheet.is-settling {
+	/* slight overshoot gives it the native spring/bounce feeling */
+	transition: top .42s cubic-bezier(.22, 1.14, .32, 1) !important;
+}
+
+/* Gradually darken the map as the white panel covers it */
+.main-screen .map-stage::after {
+	background: rgba(0, 0, 0, .28) !important;
+	opacity: var(--sheet-progress, 0);
+	transition: opacity .06s linear;
+}
+
+/* Don't suddenly change brightness when "expanded" is applied */
+.main-screen.expanded .map-stage img {
+	filter: none !important;
+}
+
+/* Entire white panel can be grabbed */
+.trip-sheet,
+.sheet-header,
+.sheet-inner {
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+/* =========================================================
+   INDEX SHELL MATCH
+   Keeps this trip page visually continuous with index.html.
+   ========================================================= */
+:root {
+    --red: #e90046;
+    --line: #ebebeb;
+    --font: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --tab-height: 62px;
+    --accent: var(--red);
+    --app-width: 100vw;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    background: #fff;
+}
+
+body {
+    color: var(--ink);
+    font-family: var(--font);
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+}
+
+.app-shell {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: none;
+    height: 100vh;
+    height: 100dvh;
+    margin: 0;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: none;
+}
+
+.screen {
+    position: relative;
+    inset: auto;
+    flex: 1 1 0%;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+}
+
+.screen.active {
+    display: block;
+}
+
+.tabbar {
+    position: relative;
+    z-index: 40;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    height: calc(var(--tab-height) + var(--safe-bottom));
+    padding: 7px 0 calc(8px + var(--safe-bottom));
+    border-top: 1px solid var(--line);
+    background: #fff;
+}
+
+.tab {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #757672;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.tab .ti {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 28px;
+}
+
+.tab .ti .icon,
+.tab .abnb-ico {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.tab .nav-label {
+    font-size: 10px;
+    line-height: 14px;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+.tab.on {
+    color: var(--red);
+}
+
+.tab.on .nav-label {
+    font-weight: 700;
+}
+
+.tab .nd {
+    position: absolute;
+    top: 0;
+    right: -4px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--red);
+}
+
+.tab img.pav {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.tab.on img.pav {
+    outline: 1.5px solid var(--red);
+    outline-offset: 2px;
+}
+
+.abnb-ico {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6 !important;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.tab:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: -2px;
+}
+
+		</style>
+	</head>
+
+	<body>
+		<main id="app" class="app-shell" aria-live="polite">
+			<section id="tripView" class="screen main-screen active" aria-label="Houston trip map">
+				<div class="map-stage">
+					<img src="https://cdn.screenshottocode.com/X_Gc98vDrffOhSM0h-eq5.png" alt="Map of Houston centered on Montrose" />
+					<button class="map-hotspot search-hotspot" id="mapSearch" aria-label="Search the map"></button>
+					<button class="map-hotspot stay-hotspot" id="mapStay" aria-label="Show your stay"></button>
+				</div>
+
+				<section class="trip-sheet" id="tripSheet" aria-label="Houston trip">
+					<div class="sheet-inner">
+						<button class="sheet-grabber" id="sheetGrabber" aria-label="Expand or collapse trip details"></button>
+						<header class="sheet-header">
+							<button class="circle-back sheet-back" id="mainBack" aria-label="Back">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M19 12H5M11 6l-6 6 6 6" />
+								</svg>
+							</button>
+							<h1>Houston</h1>
+						</header>
+
+						<article class="stay-card" id="stayCard" tabindex="0" role="button" aria-label="Open your stay details">
+							<div class="stay-overview">
+								<img class="stay-thumb" src="https://cdn.screenshottocode.com/RGomUimJyCfqfQXI_FVZG.jpg" alt="Bright Houston studio bedroom" />
+								<div class="stay-copy">
+									<h2>Your stay</h2>
+									<p class="host">Hosted by Phillip</p>
+									<p class="range">Oct 3 – 4</p>
+								</div>
+							</div>
+							<div class="stay-divider"></div>
+							<button class="share-listing" id="shareListing" aria-label="Share listing">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M12 16V3M8 7l4-4 4 4M5 12v8h14v-8" />
+								</svg>
+								<span>Share listing</span>
+							</button>
+						</article>
+
+						<section class="timeline" aria-label="Stay timeline">
+							<div class="date-line"></div>
+							<div class="date-node first"><b>Sat</b><span>3</span></div>
+							<div class="date-node second"><b>Sun</b><span>4</span></div>
+
+							<article class="event-card first">
+								<div class="door-tile"><img src="https://cdn.screenshottocode.com/hOQ4s6_uVUlVcLRt4rcLJ.png" alt="Open door" /></div>
+								<div class="event-copy">
+									<h3>Check-in</h3>
+									<p>After 4:00 PM</p>
+								</div>
+							</article>
+							<article class="event-card second">
+								<div class="door-tile"><img class="closed" src="https://cdn.screenshottocode.com/NFNCd1_X42kAutamukd7a.png" alt="Closed door" /></div>
+								<div class="event-copy">
+									<h3>Checkout</h3>
+									<p>Before 10:00 AM</p>
+								</div>
+							</article>
+						</section>
+
+						<img class="houston-stamp" src="https://cdn.screenshottocode.com/Ae8kErGPqP336FBxHYO7l.png" alt="Houston travel stamp" />
+					</div>
+				</section>
+			</section>
+
+			<section id="detailView" class="screen detail-screen" aria-label="Trip details">
+				<header class="detail-topbar">
+					<button class="circle-back detail-back" data-back="trip" aria-label="Back to Houston trip">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M19 12H5M11 6l-6 6 6 6" />
+						</svg>
+					</button>
+				</header>
+				<div class="detail-main">
+					<div class="listing-hero">
+						<img src="https://cdn.screenshottocode.com/JMakdjuSVmw0GYttHU0Jf.png" alt="Home in Houston" />
+					</div>
+					<div class="listing-heading">
+						<h1>Home in Houston</h1>
+						<p>Hosted by Phillip</p>
+					</div>
+
+					<section class="dates-card" aria-label="Reservation dates">
+						<div class="date-col">
+							<h2>Check-in</h2>
+							<p class="day">Sat, Oct 3</p>
+							<p class="time">4:00 PM</p>
+						</div>
+						<div class="date-col">
+							<h2>Checkout</h2>
+							<p class="day">Sun, Oct 4</p>
+							<p class="time">10:00 AM</p>
+						</div>
+					</section>
+
+					<section class="trip-info" aria-label="Trip information">
+						<button class="info-row" id="directionsButton">
+							<svg class="info-icon" viewBox="0 0 32 36">
+								<path d="M16 34S4 23.3 4 14.4C4 7.3 9.2 2 16 2s12 5.3 12 12.4C28 23.3 16 34 16 34Z" />
+								<circle cx="16" cy="14" r="4.3" />
+							</svg>
+							<span class="info-copy">
+								<h2>Getting there</h2>
+								<p>1903 Commonwealth Street</p>
+							</span>
+						</button>
+						<button class="info-row" id="messageHost">
+							<svg class="info-icon" viewBox="0 0 32 31">
+								<path d="M4 3h24a2 2 0 0 1 2 2v17a2 2 0 0 1-2 2h-8l-4.5 4L11 24H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" />
+							</svg>
+							<span class="info-copy">
+								<h2>Message your host</h2>
+								<p>Phillip</p>
+							</span>
+						</button>
+						<button class="info-row" id="yourPlace">
+							<svg class="info-icon" viewBox="0 0 34 33">
+								<path d="M3 5h28v18H3zM7 5V2M27 5V2M12 11h10v8H12zM17 23v6M12 30h10M8 27h18" />
+							</svg>
+							<span class="info-copy">
+								<h2>Your place</h2>
+								<p>Montrose Blissful Studio | Medical Center 13!</p>
+							</span>
+						</button>
+					</section>
+
+					<div class="detail-divider"></div>
+
+					<!-- MERGED: Reservation Details natively viewable by scrolling -->
+					<div class="reservation-content" style="margin-top: 32px; padding-bottom: 24px;">
+						<h2 style="font-size: 24px; font-weight: 700; margin-bottom: 30px;">Reservation details</h2>
+
+						<section class="res-block who-block" style="margin-top: 0;">
+							<h2>Who’s coming</h2>
+							<p>1 guest</p>
+						</section>
+						<section class="res-block code-block">
+							<h2>Confirmation code</h2>
+							<p>HMQKT2TACB</p>
+						</section>
+						<section class="res-block policy-block" id="policyBlockDetail">
+							<h2>Cancellation policy</h2>
+							<p class="policy-copy">This reservation is non-refundable.</p>
+							<button class="read-more" onclick="togglePolicy('policyBlockDetail')">Read more</button>
+							<p class="policy-extra">Changes and cancellations are not eligible for a refund.</p>
+						</section>
+
+						<button class="pdf-row" onclick="downloadPDF()">
+							<svg class="globe" viewBox="0 0 24 24">
+								<circle cx="12" cy="12" r="9" />
+								<path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" />
+							</svg>
+							<span>Get a PDF for visa purposes</span>
+							<svg class="chevron" viewBox="0 0 20 20">
+								<path d="m7 3 7 7-7 7" />
+							</svg>
+						</button>
+						<div class="reservation-divider"></div>
+
+						<section class="getting-section" id="gettingThereDetail">
+							<h2>Getting there</h2>
+							<a class="getting-map-link" href="https://maps.google.com/?q=1903+Commonwealth+Street+Houston" target="_blank" rel="noopener" aria-label="Open 1903 Commonwealth Street in Google Maps">
+								<img src="https://cdn.screenshottocode.com/nRnli9KLjd7A-CbsrUtKG.png" alt="Map showing the verified listing in Montrose, Houston" />
+							</a>
+						</section>
+
+						<section class="additional-details" aria-label="Additional reservation details">
+							<h2>More reservation details</h2>
+							<div class="detail-list">
+								<button type="button" onclick="showToast('Check-in instructions')">
+									<svg viewBox="0 0 24 24">
+										<path d="M4 21V4h12v17M8 12h4M16 8h4v13M2 21h20" />
+									</svg>
+									<span><strong>Check-in instructions</strong><small>Instructions are available before your stay</small></span>
+									<svg class="row-chevron" viewBox="0 0 20 20">
+										<path d="m7 3 7 7-7 7" />
+									</svg>
+								</button>
+								<button type="button" onclick="showToast('House rules')">
+									<svg viewBox="0 0 24 24">
+										<path d="m3 11 9-8 9 8v10H3zM9 21v-6h6v6" />
+									</svg>
+									<span><strong>House rules</strong><small>Review the rules for this home</small></span>
+									<svg class="row-chevron" viewBox="0 0 20 20">
+										<path d="m7 3 7 7-7 7" />
+									</svg>
+								</button>
+								<button type="button" onclick="showToast('Payment details')">
+									<svg viewBox="0 0 24 24">
+										<rect x="3" y="5" width="18" height="14" rx="2" />
+										<path d="M3 10h18M7 15h4" />
+									</svg>
+									<span><strong>Payment details</strong><small>Your receipt and payment information</small></span>
+									<svg class="row-chevron" viewBox="0 0 20 20">
+										<path d="m7 3 7 7-7 7" />
+									</svg>
+								</button>
+							</div>
+						</section>
+					</div>
+				</div>
+			</section>
+
+			<nav class="tabbar" aria-label="Primary navigation">
+				<button class="tab" data-go="explore"><span class="ti"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+						<circle cx="13.5" cy="13.5" r="10.5" />
+						<path d="m21 21 9 9" />
+					</svg></span><span class="nav-label">Explore</span></button>
+				<button class="tab" data-go="wishlists"><span class="ti"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+						<path d="M16 28C13.7 26.4 2.5 18.6 2.5 11.5C2.5 7.2 5.35 4 9.25 4C12.05 4 14.2 6.4 16 8.25C17.8 6.4 19.95 4 22.75 4C26.65 4 29.5 7.2 29.5 11.5C29.5 18.6 18.3 26.4 16 28Z" />
+					</svg></span><span class="nav-label">Wishlists</span></button>
+				<button class="tab on" data-go="trips" aria-current="page"><span class="ti"><svg class="abnb-ico" viewBox="0 0 32 32">
+						<path d="M16 2c-2.2 0-3.8 1.6-5.1 4.3C8.9 10.4 4.4 19.9 3.6 22.6c-.8 2.6.6 5 3.2 5 1.7 0 3.4-.9 5.2-2.9.4-.4.8-.9 1.2-1.4 1-1.2 2-2.5 2.8-3.7.8 1.2 1.8 2.5 2.8 3.7.4.5.8 1 1.2 1.4 1.8 2 3.5 2.9 5.2 2.9 2.6 0 4-2.4 3.2-5-.8-2.7-5.3-12.2-7.3-16.3C19.8 3.6 18.2 2 16 2zm0 9.6c1.3 0 2.3 1.1 2.3 2.8 0 1.7-1 3.8-2.3 6-1.3-2.2-2.3-4.3-2.3-6 0-1.7 1-2.8 2.3-2.8z" />
+					</svg><i class="nd"></i></span><span class="nav-label">Trips</span></button>
+				<button class="tab" data-go="messages"><span class="ti"><svg class="icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+						<path d="M6.5 4H25.5Q29 4 29 7.5V21.5Q29 25 25.5 25H20L16 29L12 25H6.5Q3 25 3 21.5V7.5Q3 4 6.5 4Z" />
+					</svg><i class="nd"></i></span><span class="nav-label">Messages</span></button>
+				<button class="tab" data-go="profile"><span class="ti"><img class="pav" src="https://cdn.screenshottocode.com/4eU-kzOY2LsECPlvk9Eak.png" alt=""><i class="nd"></i></span><span class="nav-label">Profile</span></button>
+			</nav>
+
+			<form class="search-popover" id="searchPopover" role="search">
+				<svg viewBox="0 0 24 24">
+					<circle cx="10.5" cy="10.5" r="6.5" />
+					<path d="m15.5 15.5 5 5" />
+				</svg>
+				<input id="mapQuery" type="search" placeholder="Search the map" autocomplete="off" aria-label="Search the map" />
+				<button type="button" id="closeSearch" aria-label="Close search">×</button>
+			</form>
+			<div class="toast" id="toast" role="status"></div>
+		</main>
+
+		<script>
+
+	(() => {
+		const app = document.getElementById('app');
+		const tripView = document.getElementById('tripView');
+		const detailView = document.getElementById('detailView');
+		const tripSheet = document.getElementById('tripSheet');
+		const grabber = document.getElementById('sheetGrabber');
+		const mapStage = tripView.querySelector('.map-stage');
+		const toast = document.getElementById('toast');
+		const searchPopover = document.getElementById('searchPopover');
+
+		let toastTimer;
+
+		/* =====================================================
+		   DRAGGABLE SHEET STATE
+		   ===================================================== */
+
+		let collapsedTop = 300;
+		let expandedTop = 34;
+		let currentTop = 300;
+
+		let gesture = null;
+		let suppressClick = false;
+		let settleTimer = null;
+
+
+		/* =====================================================
+		   TOAST
+		   ===================================================== */
+
+		const showToast = (message) => {
+			clearTimeout(toastTimer);
+			toast.textContent = message;
+			toast.classList.add('show');
+			toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+		};
+
+
+		/* =====================================================
+		   SHEET MEASUREMENTS
+		   ===================================================== */
+
+		const measureSheet = () => {
+			/*
+				The sheet's normal resting position is exactly
+				at the bottom edge of the map.
+			*/
+			collapsedTop = mapStage.getBoundingClientRect().height;
+
+			/*
+				How close to the top of the screen the sheet sits
+				when fully opened.
+			*/
+			expandedTop = 34;
+
+			/*
+				If it hasn't been positioned yet, initialize it.
+			*/
+			if (!tripSheet.style.top) {
+				currentTop = collapsedTop;
+				tripSheet.style.top = `${currentTop}px`;
+			}
+		};
+
+
+		/* =====================================================
+		   MAP DIMMING BASED ON SHEET POSITION
+		   ===================================================== */
+
+		const updateSheetProgress = () => {
+			const travel = collapsedTop - expandedTop;
+
+			if (travel <= 0) return;
+
+			const progress = Math.max(
+				0,
+				Math.min(
+					1,
+					(collapsedTop - currentTop) / travel
+				)
+			);
+
+			tripView.style.setProperty(
+				'--sheet-progress',
+				progress.toFixed(4)
+			);
+		};
+
+
+		/* =====================================================
+		   PHYSICAL SHEET POSITION
+		   ===================================================== */
+
+		const positionSheet = (top, allowBottomResistance = false) => {
+			let nextTop = top;
+
+			/*
+				Don't allow dragging above the fully-open position.
+				Extra upward travel becomes content scrolling instead.
+			*/
+			nextTop = Math.max(expandedTop, nextTop);
+
+			/*
+				Allow a little rubber-band stretch below the
+				normal collapsed position.
+			*/
+			if (nextTop > collapsedTop) {
+				if (allowBottomResistance) {
+					const excess = nextTop - collapsedTop;
+
+					nextTop =
+						collapsedTop +
+						(excess * 0.20);
+				} else {
+					nextTop = collapsedTop;
+				}
+			}
+
+			currentTop = nextTop;
+			tripSheet.style.top = `${nextTop}px`;
+
+			updateSheetProgress();
+		};
+
+
+		/* =====================================================
+		   SPRING / SNAP ANIMATION
+		   ===================================================== */
+
+		const animateSheetTo = (top) => {
+			clearTimeout(settleTimer);
+
+			tripSheet.classList.remove('is-dragging');
+			tripSheet.classList.add('is-settling');
+
+			/*
+				Force browser to acknowledge the class before
+				changing position.
+			*/
+			tripSheet.getBoundingClientRect();
+
+			positionSheet(top);
+
+			settleTimer = setTimeout(() => {
+				tripSheet.classList.remove('is-settling');
+			}, 460);
+		};
+
+
+		/* =====================================================
+		   EXPANDED / COLLAPSED STATE
+		   ===================================================== */
+
+		const setExpanded = (expanded, updateHash = true) => {
+			tripView.classList.toggle('expanded', expanded);
+
+			grabber.setAttribute(
+				'aria-expanded',
+				String(expanded)
+			);
+
+			/*
+				When closing the panel, content returns to its top.
+			*/
+			if (!expanded) {
+				tripSheet.scrollTop = 0;
+			}
+
+			animateSheetTo(
+				expanded
+					? expandedTop
+					: collapsedTop
+			);
+
+			if (
+				updateHash &&
+				(
+					location.hash === '' ||
+					location.hash.startsWith('#trip')
+				)
+			) {
+				history.replaceState(
+					null,
+					'',
+					expanded
+						? '#trip-expanded'
+						: '#trip'
+				);
+			}
+		};
+
+
+		/* =====================================================
+		   VIEW ROUTING
+		   ===================================================== */
+
+		const showView = (name, push = false) => {
+			[tripView, detailView].forEach(view =>
+				view.classList.remove('active')
+			);
+
+			searchPopover.classList.remove('open');
+
+			if (name === 'detail') {
+				detailView.classList.add('active');
+			} else {
+				tripView.classList.add('active');
+			}
+
+			if (push) {
+				history.pushState(
+					{ view: name },
+					'',
+					'#' + name
+				);
+			}
+		};
+
+
+		const route = () => {
+			const hash = location.hash.replace('#', '');
+
+			if (hash === 'detail') {
+				showView('detail');
+			} else {
+				showView('trip');
+
+				measureSheet();
+
+				const expanded =
+					hash === 'trip-expanded';
+
+				tripView.classList.toggle(
+					'expanded',
+					expanded
+				);
+
+				grabber.setAttribute(
+					'aria-expanded',
+					String(expanded)
+				);
+
+				currentTop =
+					expanded
+						? expandedTop
+						: collapsedTop;
+
+				tripSheet.style.top =
+					`${currentTop}px`;
+
+				if (!expanded) {
+					tripSheet.scrollTop = 0;
+				}
+
+				updateSheetProgress();
+			}
+		};
+
+
+		/* =====================================================
+		   ENTIRE WHITE PANEL DRAG
+		   ===================================================== */
+
+		const startSheetGesture = (event) => {
+			if (
+				event.pointerType === 'mouse' &&
+				event.button !== 0
+			) {
+				return;
+			}
+
+			clearTimeout(settleTimer);
+
+			tripSheet.classList.remove('is-settling');
+
+			const now = performance.now();
+
+			gesture = {
+				pointerId: event.pointerId,
+
+				startY: event.clientY,
+				lastY: event.clientY,
+
+				startTop: currentTop,
+				startScrollTop: tripSheet.scrollTop,
+
+				lastTime: now,
+				velocityY: 0,
+
+				moved: false,
+				sheetMoved: false,
+				contentMoved: false
+			};
+
+			try {
+				tripSheet.setPointerCapture(event.pointerId);
+			} catch (_) {}
+		};
+
+
+		const moveSheetGesture = (event) => {
+			if (
+				!gesture ||
+				event.pointerId !== gesture.pointerId
+			) {
+				return;
+			}
+
+			const totalDeltaY =
+				event.clientY -
+				gesture.startY;
+
+			if (Math.abs(totalDeltaY) < 3) {
+				return;
+			}
+
+			/*
+				We're manually deciding whether the finger moves
+				the panel or scrolls its content.
+			*/
+			event.preventDefault();
+
+			const now = performance.now();
+
+			const elapsed =
+				Math.max(
+					1,
+					now - gesture.lastTime
+				);
+
+			const instantVelocity =
+				(event.clientY - gesture.lastY) /
+				elapsed;
+
+			gesture.velocityY =
+				(gesture.velocityY * 0.68) +
+				(instantVelocity * 0.32);
+
+			gesture.lastY = event.clientY;
+			gesture.lastTime = now;
+
+			if (Math.abs(totalDeltaY) > 7) {
+				gesture.moved = true;
+				suppressClick = true;
+			}
+
+
+			/* =================================================
+			   STARTED WHILE PANEL WAS FULLY OPEN
+			   ================================================= */
+
+			if (
+				gesture.startTop <=
+				expandedTop + 1
+			) {
+				/*
+					Move content opposite the finger.
+
+					Finger UP:
+					totalDeltaY negative
+					=> scrollTop increases
+
+					Finger DOWN:
+					totalDeltaY positive
+					=> scrollTop decreases
+				*/
+				const proposedScroll =
+					gesture.startScrollTop -
+					totalDeltaY;
+
+
+				/*
+					Content can still scroll normally.
+				*/
+				if (proposedScroll >= 0) {
+					positionSheet(expandedTop);
+
+					tripSheet.scrollTop =
+						proposedScroll;
+
+					gesture.contentMoved = true;
+
+					return;
+				}
+
+
+				/*
+					Content has reached its very top.
+
+					The remaining downward finger movement now
+					pulls the ENTIRE sheet downward.
+				*/
+				tripSheet.scrollTop = 0;
+
+				const sheetPull =
+					-proposedScroll;
+
+				tripSheet.classList.add(
+					'is-dragging'
+				);
+
+				positionSheet(
+					expandedTop + sheetPull,
+					true
+				);
+
+				gesture.sheetMoved = true;
+
+				return;
+			}
+
+
+			/* =================================================
+			   STARTED WHILE PANEL WAS DOWN / PARTIALLY DOWN
+			   ================================================= */
+
+			const requestedTop =
+				gesture.startTop +
+				totalDeltaY;
+
+
+			/*
+				The sheet has reached the very top.
+
+				Any additional upward finger travel instantly
+				becomes content scrolling.
+
+				This lets one continuous swipe:
+				
+				1. raise panel
+				2. cover map
+				3. start scrolling content
+				
+				without lifting your finger.
+			*/
+			if (requestedTop <= expandedTop) {
+				const extraUpwardTravel =
+					expandedTop -
+					requestedTop;
+
+				tripSheet.classList.add(
+					'is-dragging'
+				);
+
+				positionSheet(expandedTop);
+
+				tripSheet.scrollTop =
+					extraUpwardTravel;
+
+				gesture.sheetMoved = true;
+				gesture.contentMoved = true;
+
+				return;
+			}
+
+
+			/*
+				Still moving through the map area:
+				move the WHOLE white section with the finger.
+			*/
+			tripSheet.scrollTop = 0;
+
+			tripSheet.classList.add(
+				'is-dragging'
+			);
+
+			positionSheet(
+				requestedTop,
+				true
+			);
+
+			gesture.sheetMoved = true;
+		};
+
+
+		const endSheetGesture = (event) => {
+			if (!gesture) return;
+
+			if (
+				event.pointerId !== undefined &&
+				event.pointerId !== gesture.pointerId
+			) {
+				return;
+			}
+
+			const finished = gesture;
+
+			gesture = null;
+
+			tripSheet.classList.remove(
+				'is-dragging'
+			);
+
+
+			/*
+				If the physical sheet was pulled somewhere between
+				open and closed, decide where to spring it.
+			*/
+			if (currentTop > expandedTop + 1) {
+				const midpoint =
+					expandedTop +
+					(
+						(collapsedTop - expandedTop) /
+						2
+					);
+
+				let expand;
+
+
+				/*
+					Fast flick upward.
+				*/
+				if (finished.velocityY < -0.30) {
+					expand = true;
+				}
+
+				/*
+					Fast flick downward.
+				*/
+				else if (finished.velocityY > 0.30) {
+					expand = false;
+				}
+
+				/*
+					Slow release:
+					go to whichever resting position is closer.
+				*/
+				else {
+					expand =
+						currentTop <
+						midpoint;
+				}
+
+				setExpanded(expand);
+			}
+
+			else {
+				/*
+					It reached the top, therefore it is expanded.
+				*/
+				tripView.classList.add(
+					'expanded'
+				);
+
+				grabber.setAttribute(
+					'aria-expanded',
+					'true'
+				);
+
+				animateSheetTo(
+					expandedTop
+				);
+
+				if (
+					location.hash === '' ||
+					location.hash.startsWith('#trip')
+				) {
+					history.replaceState(
+						null,
+						'',
+						'#trip-expanded'
+					);
+				}
+			}
+
+
+			/*
+				Prevents accidental card/button activation after
+				a finger drag.
+			*/
+			if (finished.moved) {
+				setTimeout(() => {
+					suppressClick = false;
+				}, 100);
+			}
+		};
+
+
+		tripSheet.addEventListener(
+			'pointerdown',
+			startSheetGesture
+		);
+
+		tripSheet.addEventListener(
+			'pointermove',
+			moveSheetGesture,
+			{ passive: false }
+		);
+
+		tripSheet.addEventListener(
+			'pointerup',
+			endSheetGesture
+		);
+
+		tripSheet.addEventListener(
+			'pointercancel',
+			endSheetGesture
+		);
+
+
+		/*
+			If the user dragged instead of tapped, don't accidentally
+			open "Your stay", Share, etc.
+		*/
+		tripSheet.addEventListener(
+			'click',
+			(event) => {
+				if (!suppressClick) return;
+
+				event.preventDefault();
+				event.stopPropagation();
+
+				suppressClick = false;
+			},
+			true
+		);
+
+
+		/* =====================================================
+		   GRABBER TAP
+		   ===================================================== */
+
+		grabber.addEventListener(
+			'click',
+			() => {
+				if (suppressClick) return;
+
+				setExpanded(
+					!tripView.classList.contains(
+						'expanded'
+					)
+				);
+			}
+		);
+
+
+		/* =====================================================
+		   MAP
+		   ===================================================== */
+
+		document
+			.getElementById('mapStay')
+			.addEventListener(
+				'click',
+				() => setExpanded(true)
+			);
+
+
+		document
+			.getElementById('mapSearch')
+			.addEventListener(
+				'click',
+				() => {
+					searchPopover.classList.add(
+						'open'
+					);
+
+					document
+						.getElementById('mapQuery')
+						.focus();
+				}
+			);
+
+
+		document
+			.getElementById('closeSearch')
+			.addEventListener(
+				'click',
+				() =>
+					searchPopover.classList.remove(
+						'open'
+					)
+			);
+
+
+		searchPopover.addEventListener(
+			'submit',
+			(event) => {
+				event.preventDefault();
+
+				const query =
+					document
+						.getElementById('mapQuery')
+						.value
+						.trim();
+
+				searchPopover.classList.remove(
+					'open'
+				);
+
+				showToast(
+					query
+						? `Searching Houston for “${query}”`
+						: 'Enter a place to search'
+				);
+			}
+		);
+
+
+		/* =====================================================
+		   STAY DETAILS
+		   ===================================================== */
+
+		const openDetail = () =>
+			showView('detail', true);
+
+
+		document
+			.getElementById('stayCard')
+			.addEventListener(
+				'click',
+				(event) => {
+					if (
+						!event.target.closest(
+							'#shareListing'
+						)
+					) {
+						openDetail();
+					}
+				}
+			);
+
+
+		document
+			.getElementById('stayCard')
+			.addEventListener(
+				'keydown',
+				(event) => {
+					if (
+						(
+							event.key === 'Enter' ||
+							event.key === ' '
+						) &&
+						!event.target.closest(
+							'#shareListing'
+						)
+					) {
+						event.preventDefault();
+						openDetail();
+					}
+				}
+			);
+
+
+		/* =====================================================
+		   SHARE
+		   ===================================================== */
+
+		document
+			.getElementById('shareListing')
+			.addEventListener(
+				'click',
+				async (event) => {
+					event.stopPropagation();
+
+					const shareData = {
+						title: 'Home in Houston',
+						text: 'Montrose Blissful Studio hosted by Phillip',
+						url:
+							location.href.split('#')[0] +
+							'#detail'
+					};
+
+					try {
+						if (navigator.share) {
+							await navigator.share(
+								shareData
+							);
+						} else {
+							await navigator.clipboard
+								?.writeText(
+									shareData.url
+								);
+
+							showToast(
+								'Listing link copied'
+							);
+						}
+					} catch (_) {
+						/* share was dismissed */
+					}
+				}
+			);
+
+
+		/* =====================================================
+		   BACK
+		   ===================================================== */
+
+		document
+			.querySelectorAll('[data-back]')
+			.forEach(button =>
+				button.addEventListener(
+					'click',
+					() => {
+						history.pushState(
+							{ view: 'trip' },
+							'',
+							'#trip'
+						);
+
+						showView('trip');
+
+						measureSheet();
+
+						tripView.classList.remove(
+							'expanded'
+						);
+
+						tripSheet.scrollTop = 0;
+
+						animateSheetTo(
+							collapsedTop
+						);
+					}
+				)
+			);
+
+
+		document
+			.getElementById('mainBack')
+			.addEventListener(
+				'click',
+				() => { window.location.href = './index.html#trips'; }
+			);
+
+
+		/* =====================================================
+		   BOTTOM NAV
+		   ===================================================== */
+
+		document
+			.querySelectorAll('.nav-item')
+			.forEach(item =>
+				item.addEventListener(
+					'click',
+					() => {
+						if (
+							item.dataset.nav ===
+							'Trips'
+						) {
+							setExpanded(false);
+						} else {
+							showToast(
+								item.dataset.nav
+							);
+						}
+					}
+				)
+			);
+
+
+
+			/* =====================================================
+			   INDEX-MATCHING PRIMARY TAB BAR
+			   ===================================================== */
+
+			document
+				.querySelectorAll('.tabbar .tab')
+				.forEach(tab =>
+					tab.addEventListener('click', () =>
+					{
+						const target = tab.dataset.go;
+
+						if (target === 'trips')
+						{
+							history.replaceState({ view: 'trip' }, '', '#trip');
+							showView('trip');
+							measureSheet();
+							tripView.classList.remove('expanded');
+							tripSheet.scrollTop = 0;
+							animateSheetTo(collapsedTop);
+							return;
+						}
+
+						window.location.href = `./index.html#${target}`;
+					}));
+
+		/* =====================================================
+		   DETAIL PAGE
+		   ===================================================== */
+
+		// Scrolls smoothly directly to the newly integrated section instead of opening a new page
+		document
+			.getElementById('directionsButton')
+			.addEventListener(
+				'click',
+				() => {
+					document
+						.getElementById(
+							'gettingThereDetail'
+						)
+						.scrollIntoView({
+							behavior: 'smooth',
+							block: 'start'
+						});
+				}
+			);
+
+
+		document
+			.getElementById('messageHost')
+			.addEventListener(
+				'click',
+				() =>
+					showToast(
+						'Opening your conversation with Phillip'
+					)
+			);
+
+
+		document
+			.getElementById('yourPlace')
+			.addEventListener(
+				'click',
+				() =>
+					showToast(
+						'Montrose Blissful Studio'
+					)
+			);
+
+
+		/* =====================================================
+		   PDF
+		   ===================================================== */
+
+		const downloadPDF = () => {
+			const content =
+				'%PDF-1.1\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Count 0>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF';
+
+			const blob = new Blob(
+				[content],
+				{ type: 'application/pdf' }
+			);
+
+			const url =
+				URL.createObjectURL(blob);
+
+			const link =
+				document.createElement('a');
+
+			link.href = url;
+
+			link.download =
+				'Houston-reservation-HMQKT2TACB.pdf';
+
+			link.click();
+
+			setTimeout(
+				() => URL.revokeObjectURL(url),
+				1000
+			);
+
+			showToast(
+				'Reservation PDF downloaded'
+			);
+		};
+
+		window.downloadPDF = downloadPDF;
+
+
+		/* =====================================================
+		   POLICY
+		   ===================================================== */
+
+		const togglePolicy = (id) => {
+			const block =
+				document.getElementById(id);
+
+			const btn =
+				block.querySelector('.read-more');
+
+			const open =
+				block.classList.toggle('open');
+
+			btn.textContent =
+				open
+					? 'Show less'
+					: 'Read more';
+		};
+
+		window.togglePolicy = togglePolicy;
+		window.showToast = showToast;
+
+
+		/* =====================================================
+		   RESIZE / ROTATION
+		   ===================================================== */
+
+		const resizeSheet = () => {
+			const expanded =
+				tripView.classList.contains(
+					'expanded'
+				);
+
+			measureSheet();
+
+			currentTop =
+				expanded
+					? expandedTop
+					: collapsedTop;
+
+			tripSheet.style.top =
+				`${currentTop}px`;
+
+			updateSheetProgress();
+		};
+
+		window.addEventListener(
+			'resize',
+			resizeSheet
+		);
+
+		window.addEventListener(
+			'orientationchange',
+			() => {
+				setTimeout(
+					resizeSheet,
+					100
+				);
+			}
+		);
+
+
+		/* =====================================================
+		   ROUTING / STARTUP
+		   ===================================================== */
+
+		window.addEventListener(
+			'popstate',
+			route
+		);
+
+		measureSheet();
+		route();
+	})();
+
+		if ('serviceWorker' in navigator && window.isSecureContext && /^https?:$/.test(location.protocol))
+		{
+			window.addEventListener('load', () =>
+			{
+				navigator.serviceWorker.register('./sw.js', { scope: './', updateViaCache: 'none' })
+					.catch(error => console.warn('Offline setup could not finish:', error));
+			});
+		}
+
+</script>
+	</body>
+</html>

@@ -1,14 +1,14 @@
 'use strict';
 
 // Change this version when publishing updated HTML, icons or app files.
-const VERSION = '2026-10-06-v5-single-card-overlays';
+const VERSION = '2026-10-07-v6-trip-detail-link';
 const BASE = new URL(self.registration.scope);
 const PREFIX = `airbnb-ui:${BASE.pathname}:`;
 const SHELL_CACHE = `${PREFIX}shell:${VERSION}`;
 const MEDIA_CACHE = `${PREFIX}media:${VERSION}`;
 const APP_URL = new URL('./index.html', BASE).href;
 const SHELL_URLS = [
-  './index.html', './manifest.webmanifest', './icons/icon.svg',
+  './index.html', './test.html', './manifest.webmanifest', './icons/icon.svg',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'
 ].map(path => new URL(path, BASE).href);
 const MEDIA_ORIGINS = new Set([
